@@ -26,9 +26,6 @@ public:
 		FrameReturnFunc FrameReturn,
 		ProcessFrameFunc ProcessFrame
 		);
-
-
-private:
 	
 private:
 	bool _ClockStarted = false;
