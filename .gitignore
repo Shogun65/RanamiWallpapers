@@ -15,3 +15,5 @@ Release/
 *.rc
 *.ico
 *.vcxproj.filters
+out
+build
