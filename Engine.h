@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Window.h"
-#include "WorkerW.h"
-#include "DXDevice.h"
-#include "SwapChain.h"
-#include "DComp.h"
-#include "Render.h"
-#include "FFmpeg.h"
-#include "DXVA.h"
+#include "Window/Window.h"
+#include "Window/WorkerW.h"
+#include "DX/DXDevice.h"
+#include "SwapChin/SwapChain.h"
+#include "DComp/DComp.h"
+#include "Render/Render.h"
+#include "FFmpeg/FFmpeg.h"
+#include "DXVA/DXVA.h"
 
 class Engine
 {
