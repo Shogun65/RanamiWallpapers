@@ -40,14 +40,14 @@ void SwapChin::CreateSwapChin1(LONG Height, LONG Width, ID3D11Device* device)
 	DXGI_SWAP_CHAIN_DESC1 scd = { };
 
 	scd.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
-	scd.BufferCount = 3;
+	scd.BufferCount = 4;
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	scd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	scd.SampleDesc.Count = 1;
 	scd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	scd.Height = Height;
 	scd.Width = Width;
-	scd.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
+	//scd.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
 
 	hr = _Factory->CreateSwapChainForComposition(
 		device,

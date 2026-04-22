@@ -21,7 +21,7 @@ int WINAPI wWinMain(
 		// one extry for space -f- c the space between f-_c <- this if you can understand
 		// what iam saying
 		fileflage += 4;
-
+		 
 		static char filebuffer[512];
 
 		size_t converted = 0;

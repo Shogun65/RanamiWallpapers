@@ -37,7 +37,7 @@ target_link_libraries(AliveWallpaperEngine PRIVATE
     swscale
 )
 
-# Windows libs (important for your project)
+# Windows libs
 target_link_libraries(AliveWallpaperEngine PRIVATE
     d3d11
     dxgi
@@ -48,3 +48,13 @@ target_compile_definitions(AliveWallpaperEngine PRIVATE
     UNICODE
     _UNICODE
 )
+
+# Use static runtime (VERY important)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+
+# Force release mode optimizations
+set(CMAKE_BUILD_TYPE Release)
+
+# Optional: extra optimization flags
+add_compile_options(/O2 /GL)
+add_link_options(/LTCG)
