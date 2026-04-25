@@ -56,7 +56,7 @@ void Render::RenderFrame(
 
 	ProcessFrame(_POPFrame);
 
-	swapchin1->Present(0, 0);
+	swapchin1->Present(1, 0);
 	FrameReturn(_POPFrame);
 	_POPFrame = nullptr;
 }
