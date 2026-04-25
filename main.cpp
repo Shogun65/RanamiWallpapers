@@ -1,5 +1,33 @@
 #include "Engine.h"
 #include <cstdlib>
+#include <string>
+#include <fstream>
+
+void SavePath(const std::string &filepath)
+{
+	std::ofstream wallpaper_file_txt("wallpaper_path.txt", std::ios::trunc);
+
+	if(!wallpaper_file_txt) return;
+
+	wallpaper_file_txt << filepath;
+
+}
+
+std::string LoadPath()
+{
+
+	std::ifstream wallpaper_file_txt("wallpaper_path.txt");
+
+	std::string file_path = "";
+
+	if(!wallpaper_file_txt) return file_path;
+
+	std::getline(wallpaper_file_txt, file_path);
+
+	printf("file_path: %ws", file_path);
+
+	return file_path;
+}
 
 int WINAPI wWinMain(
 	HINSTANCE hInstance, HINSTANCE ignore, LPWSTR pCmdLine, int nCmdShow)
