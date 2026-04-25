@@ -38,4 +38,19 @@ void DXDevice::CreateDeviceAndDeviceContext()
 		printf("Device and DeviceContext Created!\n");
 	}
 
+	ComPtr<ID3D11Multithread> multithread;
+	hr = _DeviceContext->QueryInterface(
+		__uuidof(ID3D11Multithread),
+		(void**)multithread.GetAddressOf()
+	);
+
+	if (FAILED(hr))
+	{
+		MessageBox(nullptr, L"DXDevice multithread setup error", L"DXDevice Error", MB_ICONERROR);
+		std::exit(EXIT_FAILURE);
+	}
+
+	multithread->SetMultithreadProtected(TRUE);
+	printf("D3D11 multithread protection enabled!\n");
+
 }

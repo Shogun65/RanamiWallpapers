@@ -32,7 +32,7 @@ public:
 	*	This Func Process the AVFrame that we pop in render than
 	*	render that frame on backbuffer than we can persent!
 	*/
-	void ProcessFrame(AVFrame* POPFrame);
+	bool ProcessFrame(AVFrame* POPFrame);
 
 private:
 	ComPtr<ID3D11VideoDevice> _VideoDevice = nullptr;

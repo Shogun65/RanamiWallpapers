@@ -25,6 +25,10 @@ void Render::RenderFrame(
 	{
 		_ptsSec = 0.0;
 		_POPFrame = FramePOP(_ptsSec);
+		if (_POPFrame == nullptr)
+		{
+			return;
+		}
 	}
 
 	if (!_ClockStarted) {
@@ -54,9 +58,24 @@ void Render::RenderFrame(
 		if (ms > 0) Sleep(ms);
 	}
 
-	ProcessFrame(_POPFrame);
+	if (!ProcessFrame(_POPFrame))
+	{
+		FrameReturn(_POPFrame);
+		_POPFrame = nullptr;
+		PostQuitMessage(1);
+		return;
+	}
 
-	swapchin1->Present(1, 0);
+	HRESULT hr = swapchin1->Present(1, 0);
+	if (FAILED(hr))
+	{
+		printf("Present failed: 0x%08X\n", (unsigned int)hr);
+		FrameReturn(_POPFrame);
+		_POPFrame = nullptr;
+		PostQuitMessage(1);
+		return;
+	}
+
 	FrameReturn(_POPFrame);
 	_POPFrame = nullptr;
 }

@@ -153,9 +153,9 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hIn
 			_render.RenderFrame(_swapchin.GetRTVOfBackBuffer(),
 				_swapchin.GetSwapChin(),
 				_dxdevice.GetDeviceContext(),
-				[this](double &pts) {return _framequeue.pop(pts); },
-				[this](AVFrame* f) {_framepool.ReturnFrame(f); },
-				[this](AVFrame* f) {_dxva.ProcessFrame(f); }
+				[this](double &pts) { return _framequeue.pop(pts); },
+				[this](AVFrame* f) { _framepool.ReturnFrame(f); },
+				[this](AVFrame* f) { return _dxva.ProcessFrame(f); }
 
 			);
 	});

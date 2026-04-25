@@ -15,6 +15,12 @@ void Render::cleanscreen(
 
 	devicecontext->ClearRenderTargetView(RTVOfBackBuffer, clearcolor);
 
-	swapchin1->Present(1, 0);
+	HRESULT hr = swapchin1->Present(1, 0);
+
+	if (FAILED(hr))
+	{
+		printf("Present failed: 0x%08X\n", (unsigned int)hr);
+		PostQuitMessage(1);
+	}
 
 }

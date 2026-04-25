@@ -126,13 +126,13 @@ ID3D11VideoProcessorInputView* DXVA::GetInputView(AVFrame* POPFrame)
 	return _VideoInputView.Get();
 }
 
-void DXVA::ProcessFrame(AVFrame* POPFrame)
+bool DXVA::ProcessFrame(AVFrame* POPFrame)
 {
 	D3D11_VIDEO_PROCESSOR_STREAM vps = { };
 	vps.Enable = TRUE;
 	vps.pInputSurface = GetInputView(POPFrame);
 	
-	_VideoContext->VideoProcessorBlt(
+	HRESULT hr = _VideoContext->VideoProcessorBlt(
 		_VideoProcessor.Get(),
 		_VideoOutputView.Get(),
 		0,
@@ -140,6 +140,13 @@ void DXVA::ProcessFrame(AVFrame* POPFrame)
 		&vps
 	);
 
+	if (FAILED(hr))
+	{
+		printf("VideoProcessorBlt failed: 0x%08X\n", (unsigned int)hr);
+		return false;
+	}
+
+	return true;
 }
 
 void DXVA::InitDXVA(
