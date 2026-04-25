@@ -115,11 +115,12 @@ int WINAPI wWinMain(
 
 	if(video_path.empty())
 	{
-		std::string picked_file_path = PickVideoFile();
-		SavePath(picked_file_path);
+		video_path = PickVideoFile();
+		if(!video_path.empty())
+		{
+			SavePath(video_path);
+		}
 	}
-
-	video_path = LoadPath();
 
 	if(video_path.empty())
 	{
