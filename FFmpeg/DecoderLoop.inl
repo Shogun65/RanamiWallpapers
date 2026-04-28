@@ -46,6 +46,14 @@ void FFmpeg::RunDecoderLoop(Pushframe pushframe, GetFrame getframe, ReturnFrame 
 				AVFrame* frame = getframe();
 				//printf("Got a frame\n");
 
+				if (frame == nullptr)
+				{
+					av_packet_unref(Packet);
+					av_packet_free(&Packet);
+					printf("stop decoder\n");
+					return;
+				}
+
 				int ret = avcodec_receive_frame(_CodecContext, frame);
 
 				if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
@@ -69,7 +77,14 @@ void FFmpeg::RunDecoderLoop(Pushframe pushframe, GetFrame getframe, ReturnFrame 
 					if (ts != AV_NOPTS_VALUE) {
 						ptsSec = ts * av_q2d(_VideoTimeBase);
 					}
-					pushframe(frame, ptsSec);
+					if (!pushframe(frame, ptsSec))
+					{
+						returnframe(frame);
+						av_packet_unref(Packet);
+						av_packet_free(&Packet);
+						printf("stop decoder\n");
+						return;
+					}
 				}
 			}
 

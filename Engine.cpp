@@ -3,6 +3,8 @@
 Engine::~Engine()
 {
 	_ffmpeg.ShutDownDecoder();
+	_framequeue.Shutdown();
+	_framepool.Shutdown();
 	if(_DecodeingLoop_Thread.joinable())
 	{
 		_DecodeingLoop_Thread.join();
@@ -123,7 +125,7 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hIn
 	_DecodeingLoop_Thread = std::thread([this]()
 	{
 		_ffmpeg.RunDecoderLoop(
-			[this](AVFrame* f, double pts) {_framequeue.push(f, pts); },
+			[this](AVFrame* f, double pts) { return _framequeue.push(f, pts); },
 			[this]() {return _framepool.GetFrame(); },
 			[this](AVFrame* f) {_framepool.ReturnFrame(f); }
 		);

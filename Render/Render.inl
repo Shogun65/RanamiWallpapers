@@ -31,32 +31,30 @@ void Render::RenderFrame(
 		}
 	}
 
-	if (!_ClockStarted) {
-		QueryPerformanceFrequency(&_QpcFreq);
-		QueryPerformanceCounter(&_QpcStart);
-		_FirstPtsSec = _ptsSec;
-		_LastPtsSec = _ptsSec;
-		_ClockStarted = true;
+	if (!_ClockStarted)
+	{
+		StartPlaybackClock(_ptsSec);
 	}
 
-	// loop restart detect: pts jumps backwards
-	if (_ptsSec + 0.5 < _LastPtsSec) {
-		QueryPerformanceCounter(&_QpcStart);
-		_FirstPtsSec = _ptsSec;
+	if (IsLoopRestart(_ptsSec))
+	{
+		ResetPlaybackClock(_ptsSec);
 	}
+
+	if (IsFrameTooLate(_ptsSec))
+	{
+		FrameReturn(_POPFrame);
+		_POPFrame = nullptr;
+		return;
+	}
+
+	double frameDeltaSec = GetFrameDeltaSec(_ptsSec);
+	if (frameDeltaSec > 0.0)
+	{
+		WaitUntilPts(_ptsSec);
+	}
+
 	_LastPtsSec = _ptsSec;
-
-	LARGE_INTEGER now{};
-	QueryPerformanceCounter(&now);
-
-	double elapsedSec = double(now.QuadPart - _QpcStart.QuadPart) / double(_QpcFreq.QuadPart);
-	double targetSec = _ptsSec - _FirstPtsSec;
-	double waitSec = targetSec - elapsedSec;
-
-	if (waitSec > 0.0) {
-		DWORD ms = (DWORD)(waitSec * 1000.0);
-		if (ms > 0) Sleep(ms);
-	}
 
 	if (!ProcessFrame(_POPFrame))
 	{

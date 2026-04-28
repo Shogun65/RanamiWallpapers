@@ -21,6 +21,15 @@ void FrameQueue::init(int sizeofbuffer)
 	printf("Framequeue init done!\n");
 }
 
+void FrameQueue::Shutdown()
+{
+	std::lock_guard<std::mutex> lock(_Mutex);
+	_Shutdown = true;
+	_Buffering = false;
+	_CondFull.notify_all();
+	_CondEmpty.notify_all();
+}
+
 FrameQueue::~FrameQueue()
 {
 	for(int i = 0; i < _SizeofBuffer; i++)
@@ -44,8 +53,13 @@ bool FrameQueue::push(AVFrame* Frame, double PtsSec)
 	
 	_CondFull.wait(lock, [&]() 
 	{ 
-		return _BufferCount < _SizeofBuffer; // if Queue is full than wait
+		return _Shutdown || _BufferCount < _SizeofBuffer; // if Queue is full than wait
 	});
+
+	if (_Shutdown)
+	{
+		return false;
+	}
 
 	//printf("Pushing Frame on Tail: %d\n", _Tail);
 	_Buffer[_Tail] = Frame; // put the frame pointer in Queue
@@ -76,8 +90,13 @@ AVFrame* FrameQueue::pop(double &OutPtsSec)
 
 	_CondEmpty.wait(lock, [&]()
 	{
-		return (_BufferCount > 0) && (!_Buffering);
+		return _Shutdown || ((_BufferCount > 0) && (!_Buffering));
 	});
+
+	if (_Shutdown)
+	{
+		return nullptr;
+	}
 	//printf("Takeing Frame from head: %d\n", _Head);
 	AVFrame* frame = _Buffer[_Head];
 	OutPtsSec = _PtsBuffer[_Head];

@@ -24,11 +24,13 @@ class FramePool
 public:
 
 	void init(int sizeofqueue);
+	void Shutdown();
 	AVFrame* GetFrame();
 	void ReturnFrame(AVFrame* frame);
 
 private:
 
+	bool _Shutdown = false;
 	std::mutex _Mutex;
 	std::vector<AVFrame*> _FramePool;
 	std::condition_variable _Cond;
@@ -41,6 +43,7 @@ public:
 	~FrameQueue();
 
 	void init(int sizeofbuffer = 3);
+	void Shutdown();
 	int GetSizeofBuffer() const;
 	AVFrame* pop(double& OutPtsSec);
 	bool push(AVFrame* Frame, double PtsSec);
@@ -59,6 +62,7 @@ private:
 	std::condition_variable _CondEmpty;
 	bool _Buffering = true; // renderer waits at start
 	int _StartThreshold = 0; // how many frames before render starts
+	bool _Shutdown = false;
 
 };
 

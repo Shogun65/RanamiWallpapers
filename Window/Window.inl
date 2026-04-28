@@ -13,7 +13,6 @@ void Window::MessageLoopRun(render renderfunc)
         else
         {
             renderfunc();
-            Sleep(10); // for safety
         }
 
     }

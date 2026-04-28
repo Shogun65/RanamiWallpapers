@@ -28,6 +28,20 @@ public:
 		);
 	
 private:
+	void StartPlaybackClock(double CurrentPtsSec);
+	void ResetPlaybackClock(double CurrentPtsSec);
+	double GetElapsedPlaybackSec() const;
+	double GetPlaybackTimeSec() const;
+	double GetFrameDeltaSec(double CurrentPtsSec) const;
+	bool IsLoopRestart(double CurrentPtsSec) const;
+	bool IsFrameTooLate(double CurrentPtsSec) const;
+	void WaitUntilPts(double TargetPtsSec) const;
+
+	static constexpr double _LoopRestartThresholdSec = 0.5;
+	static constexpr double _LateFrameDropThresholdSec = 0.030;
+	static constexpr double _Sleep1ThresholdSec = 0.010;
+	static constexpr double _YieldThresholdSec = 0.002;
+
 	bool _ClockStarted = false;
 	LARGE_INTEGER _QpcFreq{};
 	LARGE_INTEGER _QpcStart{};
