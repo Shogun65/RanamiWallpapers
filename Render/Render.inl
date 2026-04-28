@@ -66,7 +66,7 @@ void Render::RenderFrame(
 		return;
 	}
 
-	HRESULT hr = swapchin1->Present(1, 0);
+	HRESULT hr = swapchin1->Present(0, 0);
 	if (FAILED(hr))
 	{
 		printf("Present failed: 0x%08X\n", (unsigned int)hr);

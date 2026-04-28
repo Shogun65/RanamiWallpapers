@@ -42,6 +42,7 @@ target_link_libraries(AliveWallpaperEngine PRIVATE
     d3d11
     dxgi
     dcomp
+    Ole32
 )
 
 target_compile_definitions(AliveWallpaperEngine PRIVATE
