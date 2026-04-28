@@ -101,3 +101,16 @@ This project is licensed under the GNU Affero General Public License v3.0.
 
 See [LICENSE](LICENSE) for full text.
 (This Writed by Codex Because iam lazy)
+(and also iam not good whit license stuff but i try to understand as much iam)
+
+## Third-Party Dependencies
+
+This project dynamically links against FFmpeg shared libraries.
+
+The distributed FFmpeg build used by this project is GPL-enabled
+(`--enable-gpl`) and licensed under the GNU General Public License
+subject to FFmpeg's own licensing terms.
+
+See:
+- https://ffmpeg.org/legal.html
+- Included third-party license files
