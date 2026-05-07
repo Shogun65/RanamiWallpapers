@@ -1,4 +1,4 @@
-# Wallpaper Engine V0.07
+# Wallpaper Engine V0.08
 
 A lightweight Windows live-wallpaper prototype written in C++ with DirectX 11, DirectComposition, and FFmpeg hardware decode (D3D11VA).
 
@@ -15,8 +15,15 @@ Implemented:
 - FFmpeg video decode with D3D11 hardware frames
 - Frame queue/pool with a dedicated decoder thread
 - Basic PTS-based playback timing and loop-at-EOF behavior
+- First-run video picker using the Windows file dialog
+- Last selected wallpaper path is saved to `wallpaper_path.txt` and auto-loaded on the next launch
 
-Not implemented yet (as of v0.07):
+New in v0.08:
+- Startup flow no longer depends on `-f- <video_path>` command-line arguments
+- Better startup usability: if no saved path exists, the app asks you to choose a video file
+- README run/build notes updated to match the current executable flow
+
+Not implemented yet (as of v0.08):
 - In-app UI/settings
 - Dynamic wallpaper selection
 - Audio playback
@@ -24,12 +31,12 @@ Not implemented yet (as of v0.07):
 
 ## Tech Stack
 
-- C++20
+- C++17
 - Win32 API
 - Direct3D 11 (`d3d11`)
 - DXGI (`dxgi`)
 - DirectComposition (`dcomp`)
-- FFmpeg shared build (`avcodec`, `avformat`, `avutil`, `swscale`, `swresample`, `avdevice`)
+- FFmpeg shared build (`avcodec`, `avformat`, `avutil`, `swscale`)
 
 ## Requirements
 
@@ -37,10 +44,11 @@ Not implemented yet (as of v0.07):
 - Visual Studio 2022 (MSVC toolset `v145`)
 - Windows SDK (`10.0` target in project)
 - FFmpeg shared build with headers/libs/dlls available locally
+- CMake 3.10+ if you want to build with the included `CMakeLists.txt`
 
 ## Project Layout
 
-- `main.cpp`: app entry + command-line parsing (`-f- <video_path>`)
+- `main.cpp`: app entry, saved-path loading, and first-run file picker flow
 - `Engine.*`: high-level app orchestration
 - `WorkerW.*`: desktop `WorkerW` discovery/attachment logic
 - `Window.*`: wallpaper window creation + message loop
@@ -61,20 +69,27 @@ Not implemented yet (as of v0.07):
    - `avformat.lib`
    - `avutil.lib`
    - `swscale.lib`
-   - `swresample.lib`
-   - `avdevice.lib`
 4. Make FFmpeg runtime DLLs available to the executable:
    - Copy FFmpeg `bin/*.dll` next to the built `.exe`, or
    - Add FFmpeg `bin` directory to your system/user `PATH`.
 
+## Build Setup (CMake)
+
+1. Update the FFmpeg include/library paths inside `CMakeLists.txt` if your FFmpeg folder is in a different location.
+2. Configure the project:
+   - `cmake -S . -B build`
+3. Build the project:
+   - `cmake --build build --config Release`
+4. The generated executable is:
+   - `build\Release\AliveWallpaperEngine.exe`
+
 ## Run
 
-1. Build and run from Visual Studio (x64 Debug/Release).
-2. Pass the wallpaper video path through command arguments using this format:
-   - `-f- C:\path\to\your\video.mp4`
-3. Example:
-   - `.\x64\Release\Wallpaper_Engine_V0.06.exe -f- "C:\Videos\wallpaper.mp4"`
-4. The app attaches to desktop `WorkerW` and starts rendering as wallpaper.
+1. Build and run from Visual Studio or CMake.
+2. On first launch, the app opens a file picker so you can choose a wallpaper video.
+3. After you choose a file once, the path is saved to `wallpaper_path.txt`.
+4. On later launches, the app loads that saved path automatically and starts rendering without extra command-line arguments.
+5. The app attaches to desktop `WorkerW` and starts rendering as wallpaper.
 
 ## Notes
 
@@ -82,7 +97,12 @@ Not implemented yet (as of v0.07):
   - `engine.MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(..., buffersize);`
   - Current default: `int buffersize = 3;`
 - Frame queue clamps buffer size to `[3, 18]`.
-- Debug console logging is enabled in the current flow.
+- Current startup flow:
+  - Try loading the video path from `wallpaper_path.txt`
+  - If the file is missing or empty, open the Windows file picker
+  - Save the selected path for the next run
+- The app sets `PER_MONITOR_AWARE_V2` DPI awareness on startup.
+- Debug console logging is currently disabled in the default startup flow.
 
 ## Troubleshooting
 
@@ -90,6 +110,10 @@ Not implemented yet (as of v0.07):
   - Re-check project property paths for the active configuration (`x64 Debug` vs `x64 Release`).
 - Missing DLL errors on launch:
   - Ensure FFmpeg runtime DLLs are in the executable directory or `PATH`.
+- No video appears on first launch:
+  - Make sure you selected a supported video file in the picker.
+- Wrong video keeps loading:
+  - Delete `wallpaper_path.txt` and launch again to pick a different file.
 - Black/green output:
   - Validate that decode is running and frames are being pushed/popped (watch debug console).
 - WorkerW attach failure:
@@ -100,7 +124,7 @@ Not implemented yet (as of v0.07):
 This project is licensed under the GNU Affero General Public License v3.0.
 
 See [LICENSE](LICENSE) for full text.
-(This Writed by Codex Because iam lazy)
+(This README update was written by Codex because iam lazy)
 (and also iam not good whit license stuff but i try to understand as much iam)
 
 ## Third-Party Dependencies
