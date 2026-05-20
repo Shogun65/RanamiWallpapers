@@ -6,6 +6,37 @@
 
 #pragma comment(lib, "Ole32.lib")
 
+int getsystembattryinfo()
+{
+    SYSTEM_POWER_STATUS sps;
+
+    if(GetSystemPowerStatus(&sps) !=1)
+    {
+        MessageBox(nullptr, L"Cant get the Power Status!", L"Error_info", MB_ICONINFORMATION);
+        return 0;
+    }
+
+    if(sps.ACLineStatus == 0)
+    {
+        MessageBox(nullptr, L"Battry Power (exiting App!!)", L"Info", MB_ICONINFORMATION);
+        return -1;
+    }
+
+    else if(sps.ACLineStatus == 1)
+    {
+        return 0; // no need to annoy user whit Message box here just continue app normaly
+    }
+
+    else
+    {
+        MessageBox(nullptr, L"cant get the Power Status!", L"Error_Info", MB_ICONINFORMATION);
+        return 0;    
+    }
+}
+
+
+
+
 void SavePath(const std::string &filepath)
 {
 	std::ofstream wallpaper_file_txt("wallpaper_path.txt", std::ios::trunc);
@@ -106,7 +137,18 @@ int WINAPI wWinMain(
 {
 	// ignore this
 	SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
+    /**
+    * Do every system chack here! because the app even runs (i think it okay for now)
+    */
 	
+    if(getsystembattryinfo() != 0) // if return is not 0 than exit the app!
+    {
+        std::exit(EXIT_SUCCESS); // why EXIT_SUCCESS because it not a Error
+                                // app can run on battry!
+    }
+
+
 	int buffersize = 3;
 
 	Engine engine;
