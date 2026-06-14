@@ -49,6 +49,14 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM 
             printf("Resive the test message from rust: _WM_ENGINE_TEST\n");
             return 0;
         }
+
+        case _WM_ENGINE_EXIT:
+        {
+            PostQuitMessage(0);
+            return 0;
+        }
+
+
     }
     return DefWindowProcW(hwnd, umsg, wparam, lparam);
 }
