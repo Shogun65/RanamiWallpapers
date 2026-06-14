@@ -41,6 +41,11 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM 
             PostQuitMessage(0);
             return 0;
         }
+
+        case _WM_ENGINE_TEST:
+        {
+            printf("Resive the test message from rust: _WM_ENGINE_TEST\n");
+        }
     }
     return DefWindowProcW(hwnd, umsg, wparam, lparam);
 }
@@ -75,7 +80,7 @@ bool Window::CreateMainWindow(HINSTANCE hInstance)
 
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.hInstance = hInstance;
-    wc.lpszClassName = L"LiveWallpaperWindow";
+    wc.lpszClassName = L"LiveWallpaperWindow-CHAHAT";
     wc.lpfnWndProc = WindowProc;
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 

@@ -50,7 +50,10 @@ private:
 
 	// Custom windows messages
 
-	static constexpr UINT _WM_ENGINE_EXIT = WM_APP + 1;
+	static constexpr UINT _WM_ENGINE_TEST = WM_APP + 1;
+	static constexpr UINT _WM_ENGINE_EXIT = WM_APP + 2;
+
+
 
 };
 #include "Window.inl"
