@@ -24,7 +24,7 @@ void Window::InitDebugConsole()
     setvbuf(stderr, NULL, _IONBF, 0);
      
     printf("----Debug console----\n");
-    printf("----EXE VERSION: V0.07----\n");
+    printf("----EXE VERSION: V0.08----\n");
     fflush(stdout);
 }
 
@@ -81,10 +81,10 @@ bool Window::CreateMainWindow(HINSTANCE hInstance)
 
     RegisterClassEx(&wc);
 
-        _hwnd = CreateWindowEx(
+    _hwnd = CreateWindowEx(
         WS_EX_NOREDIRECTIONBITMAP | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW,
         wc.lpszClassName,
-        L"",
+        L"ALive-Wallpaper-Engine-CHAHAT",
         WS_POPUP,
         0, 0,
         GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),

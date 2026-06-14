@@ -47,5 +47,10 @@ private:
 	//Windows height And Width for others if needed
 	LONG _WindowWidth = 0;
 	LONG _WindowHeight = 0;
+
+	// Custom windows messages
+
+	static constexpr UINT _WM_ENGINE_EXIT = WM_APP + 1;
+
 };
 #include "Window.inl"
