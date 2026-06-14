@@ -42,9 +42,12 @@ LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM 
             return 0;
         }
 
+        // NOTE: this is just test message anyone can change it it if they want to test
+        // something!
         case _WM_ENGINE_TEST:
         {
             printf("Resive the test message from rust: _WM_ENGINE_TEST\n");
+            return 0;
         }
     }
     return DefWindowProcW(hwnd, umsg, wparam, lparam);
@@ -112,6 +115,8 @@ bool Window::CreateMainWindow(HINSTANCE hInstance)
     _WindowWidth = rc.right - rc.left;
     _WindowHeight = rc.bottom - rc.top;
     wprintf(L"Window: %d x %d\n", _WindowWidth, _WindowHeight);
+
+    printf("Main_Window HWND: %p\n", _hwnd);
 
     return true;  
 }
