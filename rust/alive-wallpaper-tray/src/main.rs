@@ -97,11 +97,6 @@ fn get_client_data() -> ClientData
 {
     let args: Vec<String> = env::args().collect();
 
-    // let hwnd = args.get(1)
-    // .expect("No HWND GIVEN!")
-    // .parse::<usize>()
-    // .expect("NOT A number (HWND)");
-
     let hwnd = usize::from_str_radix(
                                         args.get(1).
 
