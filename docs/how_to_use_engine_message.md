@@ -62,7 +62,7 @@ See:
 ## Message Flow
 
 ```text
-Tray/ GUI(SOON)
+Tray
       |
       | PostMessageW(...)
       v

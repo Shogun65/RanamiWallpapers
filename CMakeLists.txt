@@ -17,6 +17,7 @@ add_executable(AliveWallpaperEngine WIN32
     SwapChin/SwapChain.cpp
     Window/Window.cpp
     Window/WorkerW.cpp
+    Parse/Parse.cpp
 )
 
 # Include directories
