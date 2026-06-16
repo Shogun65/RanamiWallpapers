@@ -12,6 +12,7 @@ checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
 name = "alive-wallpaper-tray"
 version = "0.1.0"
 dependencies = [
+ "shared",
  "tao",
  "tray-icon",
  "windows 0.62.2",
@@ -1465,6 +1466,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "shared"
+version = "0.1.0"
+
+[[package]]
 name = "simd-adler32"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2129,6 +2134,9 @@ dependencies = [
 [[package]]
 name = "wllpaper-engine-client"
 version = "0.1.0"
+dependencies = [
+ "shared",
+]
 
 [[package]]
 name = "writeable"

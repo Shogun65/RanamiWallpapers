@@ -15,9 +15,8 @@ use std::env;
 // also if you want to know what what message code Alive wallpaper engine suport
 // Check Window.h Window class Private area!
 //
-const WM_ENGINE_TEST: u32 = 0x8000 + 1; 
 
-const WM_ENGINE_EXIT: u32 = 0x8000 + 2;
+use shared::message::{WM_ENGINE_EXIT, WM_ENGINE_TEST};
 
 fn main() {
     
