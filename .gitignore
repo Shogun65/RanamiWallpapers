@@ -13,7 +13,7 @@ Release/
 *.filters
 *.vcxproj
 *.rc
-*.ico
 *.vcxproj.filters
 out
 build
+target
