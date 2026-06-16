@@ -111,7 +111,9 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hIn
 	const char* fileparth, int sizeofbuffer)
 {
 	_window.InitDebugConsole();
-	_framequeue.init(sizeofbuffer);
+
+	auto args_data = _parse.get_data();
+	_framequeue.init(args_data.buffer_count);
 	_framepool.init(_framequeue.GetSizeofBuffer()); //do this because sizeofbuffer need to be clamp
 	// that happand on _framequeue.init thats why use geter func of sizeofbuffer
 	_window.CreateMainWindow(hInstance);
@@ -119,7 +121,7 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hIn
 	_workerW.FindWorkerW();
 	_window.AttachHwndToWorkerW(_workerW.GetWorkerW());
 	_dxdevice.CreateDeviceAndDeviceContext();
-	_ffmpeg.InitFFmpeg(fileparth, _dxdevice.GetDevice(), 
+	_ffmpeg.InitFFmpeg(args_data.video_path.c_str(), _dxdevice.GetDevice(), 
 		_dxdevice.GetDeviceContext(), _framequeue.GetSizeofBuffer());
 
 	_DecodeingLoop_Thread = std::thread([this]()

@@ -8,6 +8,7 @@
 #include "Render/Render.h"
 #include "FFmpeg/FFmpeg.h"
 #include "DXVA/DXVA.h"
+#include "Parse/Parse.h"
 
 class Engine
 {
@@ -39,6 +40,7 @@ private:
 	FrameQueue _framequeue;
 	FramePool _framepool;
 	DXVA _dxva;
+	Parse _parse;
 
 	//this is for decoder loop
 	std::thread _DecodeingLoop_Thread;
