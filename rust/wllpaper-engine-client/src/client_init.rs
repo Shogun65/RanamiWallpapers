@@ -3,13 +3,13 @@ pub(crate) mod client_init
     use std::path::Path;
 
     
-    pub fn client_init() -> Result<(), String>
+    pub fn client_init() -> Result<(), super::error::Error>
     {
         todo!("still in work");
     }
 
 
-    fn check_files()
+    fn check_files() -> Result<(), super::error::Error>
     {
         use super::log_err::log;
         use super::files::FILES_CHECK_LIST;
@@ -17,10 +17,12 @@ pub(crate) mod client_init
         for file in FILES_CHECK_LIST{
             if !Path::new(file).exists()
             {
-                log(&format!("MISSING FILE: {}", file));
+                log(&format!("MISSING FILE: {}", file))?;
+                return Err(super::error::Error::MissingFile);
             }
             println!("File found: {}", file);
         }
+        return Ok(());
     }
 
 
@@ -42,7 +44,7 @@ pub(crate) mod log_err
     use std::io::Write;
 
 
-    pub fn log(message: &str)
+    pub fn log(message: &str) -> Result<(), super::error::Error>
     {
         let debug_file = OpenOptions::new()
                                                 .create(true)
@@ -52,16 +54,25 @@ pub(crate) mod log_err
         let result = match debug_file {
 
             Ok(mut debug) => writeln!(debug, "[ERROR] {}", message),
-            Err(err) => panic!("Error happand in engine also cant right log!, ERROR {}", err),
+            Err(_) => return Err(super::error::Error::CantOpenDebugFile),
 
         };
 
         match result {
 
-            Ok(_) => {},
-            Err(err) => panic!("Cant write the ERROR: {}", err),
+            Ok(_) => return Ok(()),
+            Err(_) => return Err(super::error::Error::CantWriteDebugError),
 
         };
 
+    }
+}
+
+pub mod error
+{
+    pub enum Error {
+        MissingFile,
+        CantWriteDebugError,
+        CantOpenDebugFile,
     }
 }
