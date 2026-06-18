@@ -4,12 +4,14 @@ pub(crate) mod windows{
     use windows::Win32::UI::WindowsAndMessaging::*;
     use windows::core::w;
     use super::super::client_init::log_err::err_log;
-    use std::sync::mpsc;
+    use std::sync::mpsc::{channel, Sender};
+    use std::ffi::c_void;
+    //use windows_result::Error;
 
-    fn run_main_window()
+    fn run_main_window(tx: Sender<isize>)
     {
 
-        let _handle = thread::spawn(||{
+        let _handle = thread::spawn(move || {
 
             unsafe{
 
@@ -33,7 +35,13 @@ pub(crate) mod windows{
                                     class_name, 
                                     w!(""), 
                                     WS_POPUP,
-                                     0, 0, 0, 0, None, None, None, None);
+                                     0, 0, 0, 0,
+                                      None, None, None, None).unwrap();
+
+                match tx.send(hwnd.0 as isize) {
+                    Ok(_) => {},
+                    Err(err) => err_log(&format!("Cant sent the tx of HWND: {}", err)),
+                }
 
 
                 let mut msg = MSG::default();
@@ -69,8 +77,18 @@ pub(crate) mod windows{
         }
     }
 
-    pub(crate) fn init_window() -> HWND
+    pub(crate) fn init_window() -> Option<HWND>
     {
-        
+        let (tx, rx) = channel::<isize>();
+
+        run_main_window(tx);
+
+        match rx.recv() {
+            Ok(hwnd) => { 
+                let main_hwnd = HWND(hwnd as *mut c_void);
+                return Some(main_hwnd); },
+            Err(err) => {err_log(&format!("Cant sent the tx of HWND: {}", err)); return None;},
+        };
+
     }
 }

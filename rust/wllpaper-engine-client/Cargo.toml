@@ -12,3 +12,4 @@ windows = {version = "0.62.2", features =[
     "Win32_UI_Shell",
     "Win32_Graphics_Gdi",
 ]}
+windows-result = "0.4.1"
