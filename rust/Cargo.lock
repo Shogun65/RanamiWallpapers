@@ -2136,6 +2136,7 @@ name = "wllpaper-engine-client"
 version = "0.1.0"
 dependencies = [
  "shared",
+ "windows 0.62.2",
 ]
 
 [[package]]
