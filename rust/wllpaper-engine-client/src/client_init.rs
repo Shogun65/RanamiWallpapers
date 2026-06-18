@@ -5,22 +5,24 @@ pub(crate) mod client_init
     
     pub fn client_init() -> Result<(), super::error::Error>
     {
-        todo!("still in work");
+        check_files()?;
+
+        return Ok(());
+
     }
 
 
     fn check_files() -> Result<(), super::error::Error>
     {
-        use super::log_err::log;
         use super::files::FILES_CHECK_LIST;
 
         for file in FILES_CHECK_LIST{
             if !Path::new(file).exists()
             {
-                log(&format!("MISSING FILE: {}", file))?;
-                return Err(super::error::Error::MissingFile);
+                //log(&format!("MISSING FILE: {}", file))?; dont do it here let main handel log
+                return Err(super::error::Error::MissingFile(String::from(file)));
             }
-            println!("File found: {}", file);
+            println!("[INFO] File found: {}", file);
         }
         return Ok(());
     }
@@ -71,7 +73,7 @@ pub(crate) mod log_err
 pub mod error
 {
     pub enum Error {
-        MissingFile,
+        MissingFile(String),
         CantWriteDebugError,
         CantOpenDebugFile,
     }
