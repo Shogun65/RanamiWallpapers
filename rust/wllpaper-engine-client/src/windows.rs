@@ -3,13 +3,16 @@ pub(crate) mod windows{
     use windows::Win32::Foundation::*; // idc man i want to code not to do this all day
     use windows::Win32::UI::WindowsAndMessaging::*;
     use windows::core::w;
-
+    use super::super::client_init::log_err::err_log;
+    use std::sync::mpsc;
 
     fn run_main_window()
     {
 
-        thread::spawn(||{
+        let _handle = thread::spawn(||{
+
             unsafe{
+
                 let class_name = w!("HiddenWindow");
             
                 let wc = WNDCLASSW{
@@ -18,7 +21,12 @@ pub(crate) mod windows{
                     ..Default::default()
                 };
 
-                RegisterClassW(&wc);
+                let idk = RegisterClassW(&wc);
+
+                if idk == 0 {
+                    err_log("Failed to register window class");
+                    return;
+                }
 
                 let hwnd = CreateWindowExW(
                                 Default::default(), 
@@ -27,12 +35,12 @@ pub(crate) mod windows{
                                     WS_POPUP,
                                      0, 0, 0, 0, None, None, None, None);
 
-    
+
                 let mut msg = MSG::default();
 
                 while GetMessageW(&mut msg, None, 0, 0).into()
                 {
-                    let _ = TranslateMessage(&mut msg);
+                    // let _ = TranslateMessage(&mut msg);
                     DispatchMessageW(&mut msg);
                 }
             }
@@ -49,7 +57,7 @@ pub(crate) mod windows{
         unsafe {
 
             match msg {
-                
+
                 WM_DESTROY =>{
                     PostQuitMessage(0);
                     return LRESULT(0);
@@ -61,4 +69,8 @@ pub(crate) mod windows{
         }
     }
 
+    pub(crate) fn init_window() -> HWND
+    {
+        
+    }
 }

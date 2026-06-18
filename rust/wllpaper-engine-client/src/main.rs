@@ -5,7 +5,7 @@ mod windows;
 use client_init::client_init::client_init;
 use client_init::error::ErrorClient;
 use engine::init_engine::run_wallpaper_engine;
-use crate::client_init::log_err::err_log;
+use client_init::log_err::err_log;
 
 fn main() {
     
