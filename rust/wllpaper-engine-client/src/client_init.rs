@@ -1,9 +1,8 @@
 pub(crate) mod client_init
 {
     use std::path::Path;
-
     
-    pub fn client_init() -> Result<(), super::error::Error>
+    pub fn client_init() -> Result<(), super::error::ErrorClient>
     {
         check_files()?;
 
@@ -12,15 +11,16 @@ pub(crate) mod client_init
     }
 
 
-    fn check_files() -> Result<(), super::error::Error>
+    fn check_files() -> Result<(), super::error::ErrorClient>
     {
         use super::files::FILES_CHECK_LIST;
+        // use super::log_err::err_log;
 
         for file in FILES_CHECK_LIST{
             if !Path::new(file).exists()
             {
-                //log(&format!("MISSING FILE: {}", file))?; dont do it here let main handel log
-                return Err(super::error::Error::MissingFile(String::from(file)));
+                //err_log(&format!("MISSING FILE: {}", file));
+                return Err(super::error::ErrorClient::MissingFile(String::from(file)));
             }
             println!("[INFO] File found: {}", file);
         }
@@ -46,7 +46,8 @@ pub(crate) mod log_err
     use std::io::Write;
 
 
-    pub fn log(message: &str) -> Result<(), super::error::Error>
+    pub fn err_log(message: &str) // useing panic! here wont hurt because 
+    //                              it dont matter when we do err_log we already want our app to get exit
     {
         let debug_file = OpenOptions::new()
                                                 .create(true)
@@ -56,14 +57,14 @@ pub(crate) mod log_err
         let result = match debug_file {
 
             Ok(mut debug) => writeln!(debug, "[ERROR] {}", message),
-            Err(_) => return Err(super::error::Error::CantOpenDebugFile),
+            Err(_) => panic!("CantOpenDebugFile"),
 
         };
 
         match result {
 
-            Ok(_) => return Ok(()),
-            Err(_) => return Err(super::error::Error::CantWriteDebugError),
+            Ok(_) => {},
+            Err(_) => panic!("CantWriteDebugError"),
 
         };
 
@@ -72,9 +73,14 @@ pub(crate) mod log_err
 
 pub mod error
 {
-    pub enum Error {
+    // pub(super) enum ErrorLog 
+    // {
+    //     CantWriteDebugError,
+    //     CantOpenDebugFile,
+    // }
+
+    pub enum ErrorClient
+    {
         MissingFile(String),
-        CantWriteDebugError,
-        CantOpenDebugFile,
     }
 }
