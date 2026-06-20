@@ -1,5 +1,5 @@
 pub(crate) mod windows{
-    use std::thread;
+    use std::thread::{self, JoinHandle};
     use windows::Win32::Foundation::*; // idc man i want to code not to do this all day
     use windows::Win32::UI::WindowsAndMessaging::*;
     use windows::core::w;
@@ -8,10 +8,10 @@ pub(crate) mod windows{
     use std::ffi::c_void;
     //use windows_result::Error;
 
-    fn run_main_window(tx: Sender<isize>)
+    fn run_main_window(tx: Sender<isize>) -> JoinHandle<()>
     {
 
-        let _handle = thread::spawn(move || {
+        let handle = thread::spawn(move || {
 
             unsafe{
 
@@ -53,9 +53,11 @@ pub(crate) mod windows{
                 }
             }
         });
+
+        return handle;
     }
 
-
+    
     extern "system" fn window_proc(
     hwnd: HWND,
     msg: u32,
@@ -77,18 +79,35 @@ pub(crate) mod windows{
         }
     }
 
-    pub(crate) fn init_window() -> Option<HWND>
+    pub(crate) fn init_window() -> InitWindowData
     {
         let (tx, rx) = channel::<isize>();
 
-        run_main_window(tx);
+        let handle = run_main_window(tx);
 
         match rx.recv() {
             Ok(hwnd) => { 
                 let main_hwnd = HWND(hwnd as *mut c_void);
-                return Some(main_hwnd); },
-            Err(err) => {err_log(&format!("Cant sent the tx of HWND: {}", err)); return None;},
-        };
+                return InitWindowData::new(handle, Some(main_hwnd)); 
+            },
 
+            Err(err) => {
+                err_log(&format!("Cant sent the tx of HWND: {}", err)); 
+                return InitWindowData::new(handle, None);
+            },
+        };
     }
+
+    pub struct InitWindowData{
+        pub handle : JoinHandle<()>,
+        pub main_hwnd : Option<HWND>
+    }
+
+    impl InitWindowData {
+        pub(crate) fn new(handle : JoinHandle<()>, main_hwnd : Option<HWND>) -> Self
+        {
+            return InitWindowData { handle, main_hwnd };
+        }
+    }
+
 }
