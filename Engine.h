@@ -9,6 +9,7 @@
 #include "FFmpeg/FFmpeg.h"
 #include "DXVA/DXVA.h"
 #include "Parse/Parse.h"
+#include <iostream>
 
 class Engine
 {

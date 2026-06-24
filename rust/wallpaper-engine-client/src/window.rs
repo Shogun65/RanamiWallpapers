@@ -5,10 +5,9 @@ pub(crate) mod windows{
     use windows::core::w;
     use super::super::client_init::log_err::err_log;
     use std::sync::mpsc::{channel, Sender};
-    use std::ffi::c_void;
-    //use windows_result::Error;
 
-    fn run_main_window(tx: Sender<isize>) -> JoinHandle<()>
+
+    fn run_main_window(tx: Sender<usize>) -> JoinHandle<()>
     {
 
         let handle = thread::spawn(move || {
@@ -38,7 +37,7 @@ pub(crate) mod windows{
                                      0, 0, 0, 0,
                                       None, None, None, None).unwrap();
 
-                match tx.send(hwnd.0 as isize) {
+                match tx.send(hwnd.0 as usize) {
                     Ok(_) => {},
                     Err(err) => err_log(&format!("Cant sent the tx of HWND: {}", err)),
                 }
@@ -81,14 +80,13 @@ pub(crate) mod windows{
 
     pub(crate) fn init_window() -> InitWindowData
     {
-        let (tx, rx) = channel::<isize>();
+        let (tx, rx) = channel::<usize>();
 
         let handle = run_main_window(tx);
 
         match rx.recv() {
             Ok(hwnd) => { 
-                let main_hwnd = HWND(hwnd as *mut c_void);
-                return InitWindowData::new(handle, Some(main_hwnd)); 
+                return InitWindowData::new(handle, Some(hwnd)); 
             },
 
             Err(err) => {
@@ -100,11 +98,11 @@ pub(crate) mod windows{
 
     pub struct InitWindowData{
         pub handle : JoinHandle<()>,
-        pub main_hwnd : Option<HWND>
+        pub main_hwnd : Option<usize>
     }
 
     impl InitWindowData {
-        pub(crate) fn new(handle : JoinHandle<()>, main_hwnd : Option<HWND>) -> Self
+        pub(crate) fn new(handle : JoinHandle<()>, main_hwnd : Option<usize>) -> Self
         {
             return InitWindowData { handle, main_hwnd };
         }

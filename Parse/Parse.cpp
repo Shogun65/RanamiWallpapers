@@ -9,11 +9,10 @@ Parse::ArgsData Parse::get_data()
 
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
-    std::wcout << argv[1] << L" : "<< argv[2] << L'\n';
+    std::wcout << L" Args: " << argv[1] << L" : "<< argv[2] << L" : " << argv[3] << L'\n';
 
     std::wstring video_path = argv[1];
  
-
     int size = WideCharToMultiByte(
         CP_UTF8,
         0,
@@ -38,7 +37,14 @@ Parse::ArgsData Parse::get_data()
         nullptr 
     );
 
+    uintptr_t hwnd = _wcstoui64(argv[3], nullptr, 0); // its base 16 and its a usize pass by rust(client.exe)
 
-    return ArgsData{result, std::stoi(argv[2])};
+    std::cout << "hwnd_of_arg_after_convert: " << hwnd << '\n';
+    
+    HWND client_hwnd = reinterpret_cast<HWND>(hwnd);
+
+    std::cout << "client hwnd in reinterpret_cast: " << client_hwnd << '\n';
+
+    return ArgsData{result, std::stoi(argv[2]), client_hwnd};
 
 }
