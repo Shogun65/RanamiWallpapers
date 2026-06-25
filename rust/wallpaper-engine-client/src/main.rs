@@ -17,8 +17,9 @@ fn main() {
 
     // that init fun for arg parse.. well sometime nameing get messy but anyways
     match init::init() {
+
         Ok(_) => {},
-        Err(error::Error::ConsoleErr(err)) => {
+        Err(error::ErrorArg::ConsoleErr(err)) => {
             err_log(&format!("Console Error: {}", err)); return;},
     }
     

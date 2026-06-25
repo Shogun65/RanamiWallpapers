@@ -1,15 +1,15 @@
 pub(crate) mod init{
     use windows::Win32::System::Console::AllocConsole;
 
-    use super::error::Error;
+    use super::error::ErrorArg;
 
-    pub(crate) fn init() -> Result<(), Error>
+    pub(crate) fn init() -> Result<(), ErrorArg>
     {
         init_console()?;
         return Ok(());
     }
 
-    fn init_console() -> Result<(), Error>{
+    fn init_console() -> Result<(), ErrorArg>{
         if std::env::args().any(|arg| arg == "--console") {
             unsafe {
                 let console_result = AllocConsole();
@@ -20,7 +20,7 @@ pub(crate) mod init{
                         return Ok(());
                     },
 
-                    Err(err) => return Err(Error::ConsoleErr(err.to_string())), 
+                    Err(err) => return Err(ErrorArg::ConsoleErr(err.to_string())), 
                 }
             };
         }
@@ -30,7 +30,7 @@ pub(crate) mod init{
 
 pub(crate) mod error{
 
-    pub(crate) enum Error {
+    pub(crate) enum ErrorArg {
         ConsoleErr(String),
     }
 
