@@ -3,22 +3,19 @@
 mod client_init;
 mod engine;
 mod window;
-
-use windows::Win32::System::Console::AllocConsole;
+mod init_console;
+mod init_tray;
 
 use client_init::client_init::client_init;
 use client_init::error::ErrorClient;
 use engine::init_engine::run_wallpaper_engine;
 use client_init::log_err::err_log;
 use window::windows::init_window;
+use init_console::init_console::init_console;
 
 fn main() {
 
-    if std::env::args().any(|arg| arg == "--console") {
-        unsafe {
-            AllocConsole().ok();
-        }
-    }
+    init_console(); // always do this before anythink in main
     
     let client_result = client_init();
 
