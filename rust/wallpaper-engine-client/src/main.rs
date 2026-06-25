@@ -15,9 +15,11 @@ use arg::{init, error};
 
 fn main() {
 
+    // that init fun for arg parse.. well sometime nameing get messy but anyways
     match init::init() {
         Ok(_) => {},
-        Err(error::ConsoleError::ConsoleErr(err)) => {err_log(&format!("Console Error: {}", err)); return;},
+        Err(error::Error::ConsoleErr(err)) => {
+            err_log(&format!("Console Error: {}", err)); return;},
     }
     
     let client_result = client_init();
