@@ -13,6 +13,7 @@ Parse::ArgsData Parse::get_data()
 
     std::wstring video_path = argv[1];
  
+    // you know what i forget how it work but it not like iam going to touch this anyway haha!
     int size = WideCharToMultiByte(
         CP_UTF8,
         0,
@@ -37,8 +38,7 @@ Parse::ArgsData Parse::get_data()
         nullptr 
     );
 
-    uintptr_t hwnd = _wcstoui64(argv[3], nullptr, 0); // its base 16 and its a usize pass by rust(client.exe)
-
+    uintptr_t hwnd = _wcstoui64(argv[3], nullptr, 0);
     std::cout << "hwnd_of_arg_after_convert: " << hwnd << '\n';
     
     HWND client_hwnd = reinterpret_cast<HWND>(hwnd);
