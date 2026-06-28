@@ -1,10 +1,12 @@
 #include "FFmpeg.h"
 #include <iostream>
-// or size of buffer
-// NOTE: Dont call this Func it going to get CALL by
-// void FrameQueue::init func.
+
+// it take the size of queue that is clamp to 3 to 18 max and init X amount of
+// AVFrame is memory simple as that
 void FramePool::init(int sizeofqueue)
 {
+	_FramePool.reserve(sizeofqueue);
+
 	for(int i = 0; i < sizeofqueue; i++)
 	{
 		printf("alloc AVFRAME!!\n");

@@ -2,4 +2,4 @@
 
 resolver = "2"
 
-members = ["alive-wallpaper-tray", "shared", "wallpaper-engine-client"]
+members = ["alive-wallpaper-tray", "shared", "wallpaper-engine-client", "wallpaper-engine-gui"]

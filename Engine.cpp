@@ -152,16 +152,22 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hIn
 
 	_window.ShowMainWindow();
 
+	/*
+	
+		PostMessageW call here! (todo!)
+	
+	*/
+
 	_window.MessageLoopRun([this]() 
 	{
-			_render.RenderFrame(_swapchin.GetRTVOfBackBuffer(),
-				_swapchin.GetSwapChin(),
-				_dxdevice.GetDeviceContext(),
-				[this](double &pts) { return _framequeue.pop(pts); },
-				[this](AVFrame* f) { _framepool.ReturnFrame(f); },
-				[this](AVFrame* f) { return _dxva.ProcessFrame(f); }
+		_render.RenderFrame(_swapchin.GetRTVOfBackBuffer(),
+			_swapchin.GetSwapChin(),
+			_dxdevice.GetDeviceContext(),
+			[this](double &pts) { return _framequeue.pop(pts); },
+			[this](AVFrame* f) { _framepool.ReturnFrame(f); },
+			[this](AVFrame* f) { return _dxva.ProcessFrame(f); }
 
-			);
+		);
 	});
 
 }
