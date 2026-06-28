@@ -2,17 +2,24 @@ mod init_s_file_picker;
 mod file_saver;
 
 use init_s_file_picker::init::init_s_file_picker;
-use file_saver::file_saver::save_file_1;
-
+use file_saver::file_saver::{save_file_1, read_file_1};
 use shared::log_err::err_log;
 
 fn main() {
+
+    let video_path = read_file_1();
+
+    match video_path {
+        Some(video_path_found) => println!("video_path: {}", video_path_found),
+        None => {err_log("err on read_file_1"); return;},
+    }
+
     let video_path = init_s_file_picker();
 
     println!("video_path: {:?}", video_path);
 
     match video_path {
-        
+
         Some(video_path_found) => {
             let save_result = save_file_1(video_path_found);
 
@@ -22,7 +29,14 @@ fn main() {
             }
         },
 
-        None => {}
+        None => {return;}
+    }
+
+    let video_path = read_file_1();
+
+    match video_path {
+        Some(video_path_found) => println!("video_path: {}", video_path_found),
+        None => {err_log("err on read_file_1"); return;},
     }
 
 }
