@@ -14,3 +14,34 @@ pub mod message
     pub const WM_ENGINE_BOOTUP_SUCCESS: u32 = WM_APP + 3;
     pub const WM_ENGINE_BOOTUP_FAILED: u32 = WM_APP + 4;
 }
+
+pub mod log_err
+{
+    use std::fs::OpenOptions;
+    use std::io::Write;
+
+
+    pub fn err_log(message: &str) // useing panic! here wont hurt because 
+    //                              it dont matter when we do err_log we already want our app to get exit
+    {
+        let debug_file = OpenOptions::new()
+                                                .create(true)
+                                                .append(true)
+                                                .open("debug.txt");
+
+        let result = match debug_file {
+
+            Ok(mut debug) => writeln!(debug, "[ERROR] {}", message),
+            Err(_) => panic!("CantOpenDebugFile"),
+
+        };
+
+        match result {
+
+            Ok(_) => {},
+            Err(_) => panic!("CantWriteDebugError"),
+
+        };
+
+    }
+}
