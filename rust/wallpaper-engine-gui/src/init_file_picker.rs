@@ -3,6 +3,7 @@ pub(crate) mod init{
     use std::path::PathBuf;
     use rfd::{AsyncFileDialog, FileDialog, FileHandle};
 
+    #[allow(dead_code)]
     pub(crate) fn init_s_file_picker() -> Option<PathBuf> {
 
 
@@ -16,7 +17,6 @@ pub(crate) mod init{
     
     }
 
-    #[allow(dead_code)]
     pub async fn init_a_file_picker() -> Option<FileHandle>{
 
         let file_handle = AsyncFileDialog::new()

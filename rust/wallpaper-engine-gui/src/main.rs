@@ -4,10 +4,8 @@ mod init_file_picker;
 mod file_saver;
 
 use init_file_picker::init::init_a_file_picker;
-// use file_saver::file_saver::{save_file_1, read_file_1};
-// use shared::log_err::err_log;
-
-
+use shared::log_err::err_log;
+use crate::file_saver::file_saver::save_file_2;
 
 fn main() -> Result<(), slint::PlatformError> {
 
@@ -20,7 +18,9 @@ fn main() -> Result<(), slint::PlatformError> {
             let file_handle = init_a_file_picker().await;
 
             if let Some(file_handle) = file_handle{
-                // save the path as json and wallpaper name too
+                if let Err(err) = save_file_2(file_handle){
+                    err_log(&format!("Error on save_file_2: {}", err));
+                }
             }
 
         }).unwrap();

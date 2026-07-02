@@ -45,3 +45,14 @@ pub mod log_err
 
     }
 }
+
+pub mod save_wallpaper{
+
+    use serde::{Serialize, Deserialize};
+
+    #[derive(Serialize, Deserialize)]
+    pub struct SaveWallpaper{
+        pub name: String,
+        pub path: String
+    }
+}

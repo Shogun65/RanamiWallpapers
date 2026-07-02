@@ -1,9 +1,11 @@
 
 pub(crate) mod file_saver{
 
-    use std::fs::OpenOptions;
+    use std::fs::{self, OpenOptions};
     use std::io::{Write, Read};
-    use std::path::PathBuf;
+    use std::path::{Path, PathBuf};
+    use rfd::FileHandle;
+    use shared::save_wallpaper::SaveWallpaper;
 
     #[allow(dead_code)]
     pub(crate) fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error>{
@@ -41,9 +43,35 @@ pub(crate) mod file_saver{
 
     */
 
+    pub fn save_file_2(file_handle: FileHandle) -> Result<(), std::io::Error>{
+        
+        let video_path = file_handle.path()
+                                .to_str().unwrap_or("Error Path")
+                                .to_string();
 
+        let save_wallpaper = SaveWallpaper{
+            name : "nan".to_string(),
+            path : video_path
+        };
+        
+        let mut vec_wallpaper: Vec<SaveWallpaper> = if Path::new("Save-Wallpapers.json").exists(){
 
+            let json = std::fs::read_to_string("Save-Wallpapers.json")?;
 
+            serde_json::from_str(&json).unwrap_or(Vec::new())
+        }
+        else {
+            Vec::new()
+        };
 
+        vec_wallpaper.push(save_wallpaper);
+
+        let json = serde_json::to_string_pretty(&vec_wallpaper)?;
+
+        fs::write("Save-Wallpapers.json", json)?;
+
+        return Ok(());
+
+    }
 
 }
