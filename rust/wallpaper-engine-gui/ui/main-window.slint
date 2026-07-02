@@ -2,64 +2,42 @@ import { Button, VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slin
 
 export component AppWindow inherits Window {
     width: 1200px;
-    height: 800px;
-    title: "Alive Wallpaper Engine";
-    background: #0d0e12; 
+    height: 700px;
 
-    // this call the pick wallpaper fn on rfd crate that is async
-    callback pick_wallpaper();
+    icon: @image-url("../assets/Alive-Wallpaper-Engine.png");
 
-    // Wrap EVERYTHING in a main VerticalBox so the Title Bar sits ON TOP of your content
+    title: "Alive wallpaper engine";
+
+    background: #c203fc;
+
+
     VerticalBox {
-        padding: 0px;
-        spacing: 0px;
 
-        // Your Main Content (The code you just modified)
         HorizontalBox {
-            padding: 15px;
-            spacing: 15px;
 
-            VerticalBox {
-                spacing: 10px;
-                width: 200px;
-
-                Rectangle {
-                    background: #14161d;
-                    height: 70px; 
-                    border-radius: 12px;
-                    TouchArea {clicked => {root.pick_wallpaper();}}
-                    Text { text: "Pick Wallpaper 📂"; color: #ffffff; font-size: 14px; }
-                    
-                }
-
-                // just a thin line it looks good
-                Rectangle {
-                    height: 3px;
-                    background: #14161d;
-                }
-
+            // left side sidebar
+            Rectangle {
+                width: 220px;
+                background: #171a22;
             }
 
+            // right side one
+            Rectangle {
 
-            VerticalBox {
-                // horizontal-stretch: 1;
-                // vertical-stretch: 1;
-                spacing: 15px;
+                background: #111318;
 
-                // Large Active Preview Card
-                Rectangle {
-                    background: #14161d;
-                    height: 350px; 
-                    border-radius: 12px;
-                    Text { text: "Active Wallpaper Preview Area(todo!)"; color: #ffffff; }
-                }
+                VerticalBox {
 
-                // Wallpapers Grid
-                Rectangle {
-                    background: #14161d;
-                    height: 350px;
-                    border-radius: 12px;
-                    Text { text: "Wallpaper Library Grid Area(todo!)"; color: #ffffff; }
+                    // live perview 
+                    Rectangle {
+                        height: 300px;
+                        background: #044bff;
+                    }
+
+                    // wallpaper lib
+                    Rectangle {
+                        background: #0de057;
+                    }
                 }
             }
         }
