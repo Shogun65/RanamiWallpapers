@@ -1,15 +1,16 @@
 import { Button, VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
+import { SidebarButton } from "sidebar-button.slint";
 
 export component AppWindow inherits Window {
     width: 1200px;
     height: 700px;
 
     icon: @image-url("../assets/Alive-Wallpaper-Engine.png");
-
     title: "Alive wallpaper engine";
 
-    background: #c203fc;
+    background: #000000;
 
+    callback import_wallpaper();
 
     VerticalBox {
 
@@ -19,6 +20,14 @@ export component AppWindow inherits Window {
             Rectangle {
                 width: 220px;
                 background: #171a22;
+
+                SidebarButton { // just for testing
+                    title: "➕ Import Wallpaper";
+                    clicked => { 
+                        root.import_wallpaper();
+                    }
+                }
+
             }
 
             // right side one

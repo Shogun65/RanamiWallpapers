@@ -1,14 +1,36 @@
 export component SidebarButton inherits Rectangle {
     
     height: 42px;
-    background: #171a22;
+    background: #940cbe;
     border-radius: 8px;
+    
 
     in property <string> title;
+    callback clicked();
 
-    Text {
+    text := Text {
+
+        x:12px;
+
         text: title;
         color: white;
+        font-size: 20px;
+
+        horizontal-alignment: center;
+        vertical-alignment: center;
     }
+
+    ta := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+        
+    }
+    
+    states [
+        hover when ta.has-hover: {
+            background: #30384a;
+        }
+    ]
 
 }

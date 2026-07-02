@@ -13,6 +13,10 @@ fn main() -> Result<(), slint::PlatformError> {
 
     let ui = AppWindow::new()?;
 
+    ui.on_import_wallpaper(||{
+        println!("➕ Import Wallpaper clicked!!!");
+    });
+
     return ui.run();
 
 }
