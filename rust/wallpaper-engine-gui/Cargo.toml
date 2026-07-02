@@ -8,6 +8,7 @@ rfd = "0.17.2"
 
 shared = {path = "../shared"}
 slint = "1.17.0"
+tokio = {version = "1.52.3", features = ["full"]}
 
 [build-dependencies]
 
