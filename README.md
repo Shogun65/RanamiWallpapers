@@ -1,3 +1,5 @@
+# this peoject is ended because of bullshit UI i hate making UI
+
 # Wallpaper Engine V0.08
 
 A lightweight Windows live-wallpaper prototype written in C++ with DirectX 11, DirectComposition, and FFmpeg hardware decode (D3D11VA).
