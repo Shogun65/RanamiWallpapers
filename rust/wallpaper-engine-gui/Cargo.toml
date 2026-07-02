@@ -7,3 +7,9 @@ edition = "2024"
 rfd = "0.17.2"
 
 shared = {path = "../shared"}
+slint = "1.17.0"
+
+[build-dependencies]
+
+slint-build = "1.17.0"
+shared = {path = "../shared"}

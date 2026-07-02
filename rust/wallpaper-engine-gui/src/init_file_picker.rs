@@ -16,6 +16,7 @@ pub(crate) mod init{
     
     }
 
+    #[allow(dead_code)]
     pub async fn init_a_file_picker() -> Option<FileHandle>{
 
         let file_handle = AsyncFileDialog::new()
