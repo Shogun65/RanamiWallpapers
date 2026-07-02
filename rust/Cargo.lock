@@ -5944,6 +5944,8 @@ name = "wallpaper-engine-gui"
 version = "0.1.0"
 dependencies = [
  "rfd",
+ "serde",
+ "serde_json",
  "shared",
  "slint",
  "slint-build",

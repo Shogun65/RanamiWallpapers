@@ -1,11 +1,11 @@
 
-
 pub(crate) mod file_saver{
 
     use std::fs::OpenOptions;
     use std::io::{Write, Read};
     use std::path::PathBuf;
 
+    #[allow(dead_code)]
     pub(crate) fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error>{
 
         let mut path_file = OpenOptions::new()
@@ -18,6 +18,7 @@ pub(crate) mod file_saver{
         return Ok(());
     }
 
+    #[allow(dead_code)]
     pub fn read_file_1() -> Option<String> {
 
 
@@ -33,6 +34,15 @@ pub(crate) mod file_saver{
 
         return Some(video_path);
     }
+
+    /*
+
+        New read and save version here that use json
+
+    */
+
+
+
 
 
 
