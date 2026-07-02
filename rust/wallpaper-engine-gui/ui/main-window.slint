@@ -1,5 +1,5 @@
 import { Button, VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
-import { SidebarButton } from "sidebar-button.slint";
+import { Sidebar } from "sidebar.slint";
 
 export component AppWindow inherits Window {
     width: 1200px;
@@ -15,15 +15,16 @@ export component AppWindow inherits Window {
     VerticalBox {
 
         HorizontalBox {
-
+            height: 700px; // dont remove this idc why than HorizontalBox just get half
+            // when add Sidebar
+            
             // left side sidebar
             Rectangle {
-                width: 220px;
-                background: #171a22;
 
-                SidebarButton { // just for testing
-                    title: "➕ Import Wallpaper";
-                    clicked => { 
+                width: 220px;
+
+                Sidebar { // just for testing
+                    import_wallpaper => { 
                         root.import_wallpaper();
                     }
                 }

@@ -1,5 +1,47 @@
 import { VerticalBox } from "std-widgets.slint";
+import { SidebarButton } from "sidebar-button.slint";
 
 export component Sidebar inherits Rectangle {
     
+    background: #171a22;
+    width: 220px;
+    border-radius: 8px;
+
+    callback import_wallpaper();
+
+    VerticalBox {
+        padding: 10px;
+        spacing: 10px;
+
+        SidebarButton {
+            title: "➕ Import Wallpaper";
+
+            clicked => {
+                root.import_wallpaper();
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            border-radius: 8px;
+            background: #2a2d35;
+        }
+
+        SidebarButton { // just a place holder for now
+            title : "⭐ Favorites";
+        }
+
+        SidebarButton { // just a place holder for now
+            title : "⚙ Settings";
+        }
+
+        SidebarButton { // just a place holder for now
+            title : "❕About";
+        }
+
+        // in future SidebarButton here or divider 
+
+
+    }
+
 }
