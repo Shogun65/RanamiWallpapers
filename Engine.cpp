@@ -137,7 +137,9 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hIn
 	_swapchin.CreateSwapChin1(
 		_window.GetWindowHeight(),
 		_window.GetWindowWidth(),
-		_dxdevice.GetDevice());
+		_dxdevice.GetDevice()
+	);
+	
 	_swapchin.CreateRTVForBackBuffer(_dxdevice.GetDevice(), _dxdevice.GetDeviceContext());
 	_DComp.CreateDComp(_window.GetHWND(), _swapchin.GetSwapChin(), _dxdevice.GetDevice());
 	
