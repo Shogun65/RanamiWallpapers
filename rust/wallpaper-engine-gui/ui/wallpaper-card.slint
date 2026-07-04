@@ -9,6 +9,7 @@ export struct WallpaperCardData {
 export component WallpaperCard inherits Rectangle {
 
     in property <WallpaperCardData> data;
+    callback wallpaper_card_double_clicked(string);
 
     min-width: 220px;
     preferred-width: 240px;
@@ -105,5 +106,12 @@ export component WallpaperCard inherits Rectangle {
         color: #677188;
         font-size: 11px;
         overflow: elide;
+    }
+
+    // Send the wallpaper path only on double click, so single clicks stay harmless.
+    touch-area := TouchArea {
+        double-clicked => {
+            root.wallpaper_card_double_clicked(data.path);
+        }
     }
 }

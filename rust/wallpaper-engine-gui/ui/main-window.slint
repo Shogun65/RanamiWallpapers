@@ -14,6 +14,7 @@ export component AppWindow inherits Window {
     background: #000000;
 
     callback import_wallpaper();
+    callback wallpaper_card_double_clicked(string);
     in-out property <[WallpaperCardData]> wallpapers: [];
 
     VerticalBox {
@@ -152,6 +153,9 @@ export component AppWindow inherits Window {
                                 width: library-scroll.card-width;
                                 height: library-scroll.card-height;
                                 data: wallpaper;
+                                wallpaper_card_double_clicked(wallpaper_path) => {
+                                    root.wallpaper_card_double_clicked(wallpaper_path);
+                                }
                             }
                         }
                     }
