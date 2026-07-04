@@ -18,6 +18,7 @@ fn main() -> Result<(), slint::PlatformError> {
     refresh_wallpaper_library(&ui);
 
     let ui_handle = ui.as_weak();
+
     ui.on_import_wallpaper(move || {
         let ui_handle = ui_handle.clone();
 
@@ -36,6 +37,14 @@ fn main() -> Result<(), slint::PlatformError> {
             }
         })
         .unwrap();
+
+        /*
+        
+        ui.on_xxxx_xwallpaper_xcard_click{|| ...} <-- inside just give me the wallpaper path
+                                                    that is get clicked after that i handel it buddy
+
+        */
+
     });
 
     return ui.run();
