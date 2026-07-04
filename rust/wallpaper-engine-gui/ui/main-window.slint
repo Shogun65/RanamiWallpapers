@@ -11,7 +11,7 @@ export component AppWindow inherits Window {
     icon: @image-url("../assets/Alive-Wallpaper-Engine.png");
     title: "Alive wallpaper engine";
 
-    background: #000000;
+    background: #08070d;
 
     callback import_wallpaper();
     callback wallpaper_card_double_clicked(string);
@@ -35,9 +35,10 @@ export component AppWindow inherits Window {
 
             // The right side is the actual library view with header, empty state, and card grid.
             Rectangle {
-
-                background: #111318;
+                background: #100d16;
                 border-radius: 14px;
+                border-width: 1px;
+                border-color: #241a36;
                 clip: true;
 
                 VerticalBox {
@@ -46,10 +47,10 @@ export component AppWindow inherits Window {
 
                     Rectangle {
                         height: 72px;
-                        background: #171d28;
+                        background: #181224;
                         border-radius: 12px;
                         border-width: 1px;
-                        border-color: #232938;
+                        border-color: #34254f;
 
                         Text {
                             x: 18px;
@@ -69,17 +70,17 @@ export component AppWindow inherits Window {
                             width: parent.width - 36px;
                             height: 16px;
                             text: "Imported wallpapers will arrange themselves here automatically.";
-                            color: #9ba4bc;
+                            color: #b3a6cc;
                             font-size: 12px;
                             overflow: elide;
                         }
                     }
 
                     Rectangle {
-                        background: #0f141c;
+                        background: #0c0a13;
                         border-radius: 16px;
                         border-width: 1px;
-                        border-color: #222838;
+                        border-color: #21192f;
                         clip: true;
 
                         if root.wallpapers.length == 0: Rectangle {
@@ -104,7 +105,7 @@ export component AppWindow inherits Window {
                                 width: parent.width - 100px;
                                 height: 36px;
                                 text: "Use Import Wallpaper on the left and every saved wallpaper will show up here as a card.";
-                                color: #8d98b0;
+                                color: #998cab;
                                 font-size: 13px;
                                 wrap: word-wrap;
                                 horizontal-alignment: center;

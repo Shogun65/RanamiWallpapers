@@ -17,17 +17,17 @@ export component WallpaperCard inherits Rectangle {
     height: 238px;
 
     clip: true;
-    background: #161b24;
+    background: #15111d;
     border-radius: 14px;
     border-width: 1px;
-    border-color: #2a3140;
+    border-color: #312548;
 
     Rectangle {
         x: 10px;
         y: 10px;
         width: parent.width - 20px;
         height: 132px;
-        background: #112a37;
+        background: #1b1329;
         border-radius: 10px;
         clip: true;
 
@@ -41,14 +41,14 @@ export component WallpaperCard inherits Rectangle {
 
         // If preview generation failed, keep a clean fallback instead of breaking the card.
         if !data.has_thumbnail: Rectangle {
-            background: #112a37;
+            background: #1b1329;
 
             Text {
                 width: parent.width;
                 y: parent.height / 2 - 11px;
                 height: 22px;
                 text: "Preview unavailable";
-                color: #80d0f5;
+                color: #c7b6ff;
                 font-size: 13px;
                 font-weight: 600;
                 horizontal-alignment: center;
@@ -60,7 +60,7 @@ export component WallpaperCard inherits Rectangle {
             y: 12px;
             width: 72px;
             height: 24px;
-            background: #9612c7;
+            background: #9f3dff;
             border-radius: 12px;
 
             // Small format pill so the card still tells you what kind of file it points to.
@@ -93,7 +93,7 @@ export component WallpaperCard inherits Rectangle {
         width: parent.width - 24px;
         height: 18px;
         text: data.path;
-        color: #9aa6bf;
+        color: #b4a8cb;
         font-size: 12px;
         overflow: elide;
     }
@@ -104,7 +104,7 @@ export component WallpaperCard inherits Rectangle {
         width: parent.width - 24px;
         height: 14px;
         text: data.has_thumbnail ? "Static thumbnail cached locally" : "Waiting for thumbnail preview";
-        color: #677188;
+        color: #7d7296;
         font-size: 11px;
         overflow: elide;
     }

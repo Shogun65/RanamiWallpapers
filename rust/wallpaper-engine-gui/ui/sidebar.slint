@@ -2,9 +2,11 @@ import { VerticalBox } from "std-widgets.slint";
 import { SidebarButton } from "sidebar-button.slint";
 
 export component Sidebar inherits Rectangle {
-    background: #171a22;
+    background: #120f1a;
     width: 220px;
     border-radius: 8px;
+    border-width: 1px;
+    border-color: #2a2040;
 
     callback import_wallpaper();
 
@@ -24,7 +26,7 @@ export component Sidebar inherits Rectangle {
         Rectangle {
             height: 1px;
             border-radius: 8px;
-            background: #2a2d35;
+            background: #312648;
         }
 
         // These buttons are visual placeholders for features that can be wired later.

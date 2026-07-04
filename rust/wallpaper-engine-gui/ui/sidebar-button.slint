@@ -1,8 +1,10 @@
 export component SidebarButton inherits Rectangle {
     // Reusable sidebar button so every menu item keeps the same size and hover behavior.
     height: 42px;
-    background: #940cbe;
+    background: #261834;
     border-radius: 8px;
+    border-width: 1px;
+    border-color: #503172;
 
     in property <string> title;
     callback clicked();
@@ -24,7 +26,8 @@ export component SidebarButton inherits Rectangle {
     // Hover feedback helps placeholder buttons still feel interactive and consistent.
     states [
         hover when ta.has-hover: {
-            background: #30384a;
+            background: #6030b8;
+            border-color: #9f6dff;
         }
     ]
 }
