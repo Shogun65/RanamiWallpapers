@@ -1,0 +1,93 @@
+export struct WallpaperCardData {
+    title: string,
+    path: string,
+    format: string,
+}
+
+export component WallpaperCard inherits Rectangle {
+
+    in property <WallpaperCardData> data;
+
+    min-width: 220px;
+    preferred-width: 240px;
+    max-width: 280px;
+    height: 182px;
+
+    clip: true;
+    background: #161b24;
+    border-radius: 14px;
+    border-width: 1px;
+    border-color: #2a3140;
+
+    Rectangle {
+        x: 10px;
+        y: 10px;
+        width: parent.width - 20px;
+        height: 86px;
+        background: #112a37;
+        border-radius: 10px;
+
+        Rectangle {
+            x: 12px;
+            y: 12px;
+            width: 72px;
+            height: 24px;
+            background: #9612c7;
+            border-radius: 12px;
+
+            Text {
+                text: data.format;
+                color: white;
+                font-size: 11px;
+                font-weight: 600;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
+        Text {
+            x: 12px;
+            y: 48px;
+            width: parent.width - 24px;
+            height: 20px;
+            text: "Saved live wallpaper";
+            color: #80d0f5;
+            font-size: 13px;
+            overflow: elide;
+        }
+    }
+
+    Text {
+        x: 12px;
+        y: 110px;
+        width: parent.width - 24px;
+        height: 24px;
+        text: data.title;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        overflow: elide;
+    }
+
+    Text {
+        x: 12px;
+        y: 140px;
+        width: parent.width - 24px;
+        height: 18px;
+        text: data.path;
+        color: #9aa6bf;
+        font-size: 12px;
+        overflow: elide;
+    }
+
+    Text {
+        x: 12px;
+        y: 160px;
+        width: parent.width - 24px;
+        height: 14px;
+        text: "Ready for your wallpaper library";
+        color: #677188;
+        font-size: 11px;
+        overflow: elide;
+    }
+}
