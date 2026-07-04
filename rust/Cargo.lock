@@ -5946,6 +5946,7 @@ dependencies = [
 name = "wallpaper-engine-gui"
 version = "0.1.0"
 dependencies = [
+ "image",
  "rfd",
  "serde",
  "serde_json",

@@ -1,6 +1,5 @@
 pub(crate) mod thumbnail_cache {
-
-    use slint::Image;
+    use std::collections::HashSet;
     use std::env;
     use std::fs;
     use std::path::{Path, PathBuf};
@@ -12,9 +11,9 @@ pub(crate) mod thumbnail_cache {
     const THUMBNAIL_HEIGHT: &str = "360";
     const THUMBNAIL_TIMESTAMP: &str = "00:00:01";
 
-    pub fn load_or_create_thumbnail(video_path: &str) -> Result<Image, String> {
+    pub fn load_or_create_thumbnail_path(video_path: &str) -> Result<PathBuf, String> {
         // Each card asks for its preview through this single entry point:
-        // build the cache path, regenerate only when needed, then load it for Slint.
+        // build the cache path and regenerate only when needed.
         let video_path = Path::new(video_path);
 
         if !video_path.exists() {
@@ -30,16 +29,69 @@ pub(crate) mod thumbnail_cache {
             generate_thumbnail(video_path, &thumbnail_path)?;
         }
 
-        Image::load_from_path(&thumbnail_path).map_err(|_| {
+        Ok(thumbnail_path)
+    }
+
+    pub fn cleanup_stale_thumbnails(video_paths: &[String]) -> Result<(), String> {
+        let cache_dir = thumbnail_cache_dir()?;
+
+        // Keep only thumbnails that still belong to saved wallpapers.
+        let expected_paths: HashSet<PathBuf> = video_paths
+            .iter()
+            .map(|video_path| thumbnail_path_for_video(Path::new(video_path)))
+            .collect::<Result<_, _>>()?;
+
+        for entry in fs::read_dir(&cache_dir).map_err(|err| {
             format!(
-                "Slint could not load thumbnail image: {}",
-                thumbnail_path.display()
+                "Could not read thumbnail cache directory {}: {err}",
+                cache_dir.display()
             )
-        })
+        })? {
+            let entry = entry.map_err(|err| {
+                format!(
+                    "Could not inspect thumbnail cache directory {}: {err}",
+                    cache_dir.display()
+                )
+            })?;
+            let thumbnail_path = entry.path();
+
+            if !thumbnail_path.is_file() {
+                continue;
+            }
+
+            let is_thumbnail = thumbnail_path
+                .extension()
+                .and_then(|extension| extension.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case(THUMBNAIL_EXTENSION));
+
+            if is_thumbnail && !expected_paths.contains(&thumbnail_path) {
+                fs::remove_file(&thumbnail_path).map_err(|err| {
+                    format!(
+                        "Could not remove stale thumbnail {}: {err}",
+                        thumbnail_path.display()
+                    )
+                })?;
+            }
+        }
+
+        Ok(())
     }
 
     fn thumbnail_path_for_video(video_path: &Path) -> Result<PathBuf, String> {
         // Keep generated previews in a local cache folder instead of polluting the repo root.
+        let cache_dir = thumbnail_cache_dir()?;
+
+        // The cached file name uses both the video name and a hash of the full path,
+        // so two different folders can still have their own "video.mp4" safely.
+        Ok(cache_dir.join(format!(
+            "{}_{}.{}",
+            sanitized_video_stem(video_path),
+            stable_path_hash(&video_path.to_string_lossy()),
+            THUMBNAIL_EXTENSION
+        )))
+    }
+
+    fn thumbnail_cache_dir() -> Result<PathBuf, String> {
         let cache_dir = env::current_dir()
             .map_err(|err| format!("Could not read current directory: {err}"))?
             .join(THUMBNAIL_CACHE_DIR);
@@ -51,14 +103,7 @@ pub(crate) mod thumbnail_cache {
             )
         })?;
 
-        // The cached file name uses both the video name and a hash of the full path,
-        // so two different folders can still have their own "video.mp4" safely.
-        Ok(cache_dir.join(format!(
-            "{}_{}.{}",
-            sanitized_video_stem(video_path),
-            stable_path_hash(&video_path.to_string_lossy()),
-            THUMBNAIL_EXTENSION
-        )))
+        Ok(cache_dir)
     }
 
     fn generate_thumbnail(video_path: &Path, thumbnail_path: &Path) -> Result<(), String> {

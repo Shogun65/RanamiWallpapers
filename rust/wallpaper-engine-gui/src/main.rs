@@ -4,24 +4,38 @@ mod file_saver;
 mod init_file_picker;
 mod thumbnail_cache;
 
-use std::{fs, path::Path, process::Command};
+use std::{
+    fs,
+    path::Path,
+    process::Command,
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
+    thread,
+};
 
 use file_saver::file_saver::{read_existing_saved_wallpapers, save_file_2};
 use init_file_picker::init::init_a_file_picker;
 use shared::log_err::err_log;
 use shared::save_wallpaper::SaveWallpaper;
-use slint::{ComponentHandle, Image, ModelRc, SharedString, VecModel};
+use slint::{
+    ComponentHandle, Image, Model, ModelRc, Rgba8Pixel, SharedPixelBuffer, SharedString, VecModel,
+};
 use thumbnail_cache::thumbnail_cache::{
-    ffmpeg_command_path, ffprobe_command_path, load_or_create_thumbnail,
+    cleanup_stale_thumbnails, ffmpeg_command_path, ffprobe_command_path,
+    load_or_create_thumbnail_path,
 };
 
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
+    let refresh_generation = Arc::new(AtomicU64::new(0));
     // Populate the library immediately so saved wallpapers appear on launch.
-    refresh_wallpaper_library(&ui);
+    refresh_wallpaper_library(&ui, &refresh_generation);
 
     // Slint callbacks can outlive this stack frame, so keep only a weak UI handle inside them.
     let ui_handle = ui.as_weak();
+    let refresh_generation_for_import = Arc::clone(&refresh_generation);
 
     ui.on_wallpaper_card_double_clicked(move |wallpaper_path| {
         // Double-clicking a wallpaper card gives you the saved wallpaper path here.
@@ -30,6 +44,7 @@ fn main() -> Result<(), slint::PlatformError> {
 
     ui.on_import_wallpaper(move || {
         let ui_handle = ui_handle.clone();
+        let refresh_generation_for_import = Arc::clone(&refresh_generation_for_import);
 
         slint::spawn_local(async move {
             // The file picker is async, so run it on Slint's event loop without freezing the window.
@@ -42,7 +57,7 @@ fn main() -> Result<(), slint::PlatformError> {
                 }
 
                 if let Some(ui) = ui_handle.upgrade() {
-                    refresh_wallpaper_library(&ui);
+                    refresh_wallpaper_library(&ui, &refresh_generation_for_import);
                 }
             }
         })
@@ -52,7 +67,11 @@ fn main() -> Result<(), slint::PlatformError> {
     return ui.run();
 }
 
-fn refresh_wallpaper_library(ui: &AppWindow) {
+fn refresh_wallpaper_library(ui: &AppWindow, refresh_generation: &Arc<AtomicU64>) {
+    // Each refresh gets its own generation number so older worker threads stop updating
+    // the UI after a newer import or reload replaces the model.
+    let generation = refresh_generation.fetch_add(1, Ordering::SeqCst) + 1;
+
     // Rebuild the whole card model from the saved JSON file whenever the library changes.
     let saved_wallpapers = match read_existing_saved_wallpapers() {
         Ok(saved_wallpapers) => saved_wallpapers,
@@ -65,38 +84,130 @@ fn refresh_wallpaper_library(ui: &AppWindow) {
         }
     };
 
-    ui.set_wallpapers(ModelRc::new(VecModel::from_iter(
-        saved_wallpapers.into_iter().map(to_wallpaper_card_data),
-    )));
+    let wallpaper_paths = saved_wallpapers
+        .iter()
+        .map(|wallpaper| wallpaper.path.clone())
+        .collect::<Vec<_>>();
+
+    // Show lightweight placeholder cards first, then fill in thumbnails/details from a worker thread.
+    let placeholder_cards = saved_wallpapers
+        .iter()
+        .map(placeholder_wallpaper_card_data)
+        .collect::<Vec<_>>();
+    ui.set_wallpapers(ModelRc::new(VecModel::from(placeholder_cards)));
+
+    let ui_handle = ui.as_weak();
+    let refresh_generation = Arc::clone(refresh_generation);
+
+    thread::spawn(move || {
+        if let Err(err) = cleanup_stale_thumbnails(&wallpaper_paths) {
+            err_log(&format!("Error on cleanup_stale_thumbnails: {}", err));
+        }
+
+        for (index, saved_wallpaper) in saved_wallpapers.into_iter().enumerate() {
+            if refresh_generation.load(Ordering::SeqCst) != generation {
+                return;
+            }
+
+            let resolved_card = resolve_wallpaper_card(saved_wallpaper);
+
+            if refresh_generation.load(Ordering::SeqCst) != generation {
+                return;
+            }
+
+            let refresh_generation_for_ui = Arc::clone(&refresh_generation);
+
+            if ui_handle
+                .upgrade_in_event_loop(move |ui| {
+                    if refresh_generation_for_ui.load(Ordering::SeqCst) != generation {
+                        return;
+                    }
+
+                    let wallpaper_model = ui.get_wallpapers();
+                    let Some(wallpaper_model) = wallpaper_model
+                        .as_any()
+                        .downcast_ref::<VecModel<WallpaperCardData>>()
+                    else {
+                        return;
+                    };
+
+                    wallpaper_model.set_row_data(index, resolved_card.into_wallpaper_card_data());
+                })
+                .is_err()
+            {
+                return;
+            }
+        }
+
+        if refresh_generation.load(Ordering::SeqCst) != generation {
+            return;
+        }
+
+        if let Err(err) = cleanup_stale_thumbnails(&wallpaper_paths) {
+            err_log(&format!("Error on cleanup_stale_thumbnails: {}", err));
+        }
+    });
 }
 
-fn to_wallpaper_card_data(saved_wallpaper: SaveWallpaper) -> WallpaperCardData {
-    // Slint cards use display-friendly strings and an optional cached preview image,
-    // so convert the raw saved JSON entry into the UI shape here.
+fn placeholder_wallpaper_card_data(saved_wallpaper: &SaveWallpaper) -> WallpaperCardData {
     let wallpaper_path = saved_wallpaper.path.clone();
     let title = wallpaper_title(&saved_wallpaper);
     let format = wallpaper_format(&wallpaper_path);
-    // Show user-facing media details on the last line instead of internal cache status text.
-    let details = wallpaper_details(&wallpaper_path);
-    // Try to attach a cached preview image to the card. If thumbnail generation fails,
-    // the UI still works and falls back to a simple placeholder panel.
-    let thumbnail = match load_or_create_thumbnail(&wallpaper_path) {
-        Ok(thumbnail) => thumbnail,
-        Err(err) => {
-            err_log(&format!("Error on load_or_create_thumbnail: {}", err));
-            Image::default()
-        }
-    };
-    let has_thumbnail = thumbnail.path().is_some();
 
     WallpaperCardData {
         title: SharedString::from(title),
         path: SharedString::from(wallpaper_path),
         format: SharedString::from(format),
-        details: SharedString::from(details),
-        thumbnail,
-        has_thumbnail,
+        details: SharedString::from("Loading wallpaper info..."),
+        thumbnail: Image::default(),
+        has_thumbnail: false,
+        is_loading: true,
     }
+}
+
+fn resolve_wallpaper_card(saved_wallpaper: SaveWallpaper) -> ResolvedWallpaperCardData {
+    // The expensive work (ffprobe + ffmpeg + filesystem metadata) happens on a worker thread,
+    // and the UI thread only receives the finished row data afterward.
+    let wallpaper_path = saved_wallpaper.path.clone();
+    let title = wallpaper_title(&saved_wallpaper);
+    let format = wallpaper_format(&wallpaper_path);
+    let details = wallpaper_details(&wallpaper_path);
+    let thumbnail_buffer = match load_or_create_thumbnail_path(&wallpaper_path) {
+        Ok(thumbnail_path) => decode_thumbnail_buffer_from_path(&thumbnail_path),
+        Err(err) => {
+            err_log(&format!("Error on load_or_create_thumbnail_path: {}", err));
+            None
+        }
+    };
+
+    ResolvedWallpaperCardData {
+        title,
+        path: wallpaper_path,
+        format,
+        details,
+        thumbnail_buffer,
+    }
+}
+
+fn decode_thumbnail_buffer_from_path(path: &Path) -> Option<SharedPixelBuffer<Rgba8Pixel>> {
+    let rgba_image = image::open(path)
+        .map_err(|err| format!("Could not decode thumbnail image {}: {err}", path.display()))
+        .map_or_else(
+            |err| {
+                err_log(&err);
+                None
+            },
+            Some,
+        )?
+        .into_rgba8();
+
+    let (width, height) = rgba_image.dimensions();
+    let mut pixel_buffer = SharedPixelBuffer::<Rgba8Pixel>::new(width, height);
+    pixel_buffer
+        .make_mut_bytes()
+        .copy_from_slice(rgba_image.as_raw());
+
+    Some(pixel_buffer)
 }
 
 fn wallpaper_title(saved_wallpaper: &SaveWallpaper) -> String {
@@ -228,4 +339,31 @@ fn format_file_size(byte_count: u64) -> String {
     }
 
     format!("{byte_count} B")
+}
+
+struct ResolvedWallpaperCardData {
+    title: String,
+    path: String,
+    format: String,
+    details: String,
+    thumbnail_buffer: Option<SharedPixelBuffer<Rgba8Pixel>>,
+}
+
+impl ResolvedWallpaperCardData {
+    fn into_wallpaper_card_data(self) -> WallpaperCardData {
+        // Slint::Image is not Send, so the worker thread forwards only plain data and a
+        // decoded pixel buffer. The final Image object is created back on the UI thread here.
+        let thumbnail = self.thumbnail_buffer.map(Image::from_rgba8);
+        let has_thumbnail = thumbnail.is_some();
+
+        WallpaperCardData {
+            title: SharedString::from(self.title),
+            path: SharedString::from(self.path),
+            format: SharedString::from(self.format),
+            details: SharedString::from(self.details),
+            thumbnail: thumbnail.unwrap_or_default(),
+            has_thumbnail,
+            is_loading: false,
+        }
+    }
 }
