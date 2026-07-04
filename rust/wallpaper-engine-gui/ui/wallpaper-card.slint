@@ -2,6 +2,8 @@ export struct WallpaperCardData {
     title: string,
     path: string,
     format: string,
+    thumbnail: image,
+    has_thumbnail: bool,
 }
 
 export component WallpaperCard inherits Rectangle {
@@ -11,7 +13,7 @@ export component WallpaperCard inherits Rectangle {
     min-width: 220px;
     preferred-width: 240px;
     max-width: 280px;
-    height: 182px;
+    height: 238px;
 
     clip: true;
     background: #161b24;
@@ -23,9 +25,41 @@ export component WallpaperCard inherits Rectangle {
         x: 10px;
         y: 10px;
         width: parent.width - 20px;
-        height: 86px;
+        height: 132px;
         background: #112a37;
         border-radius: 10px;
+        clip: true;
+
+        // Show the cached ffmpeg preview when we have one.
+        if data.has_thumbnail: Image {
+            width: parent.width;
+            height: parent.height;
+            source: data.thumbnail;
+            image-fit: cover;
+        }
+
+        // If preview generation failed, keep a clean fallback instead of breaking the card.
+        if !data.has_thumbnail: Rectangle {
+            background: #112a37;
+
+            Text {
+                width: parent.width;
+                y: parent.height / 2 - 11px;
+                height: 22px;
+                text: "Preview unavailable";
+                color: #80d0f5;
+                font-size: 13px;
+                font-weight: 600;
+                horizontal-alignment: center;
+            }
+        }
+
+        Rectangle {
+            y: parent.height - 42px;
+            width: parent.width;
+            height: 42px;
+            background: #00000055;
+        }
 
         Rectangle {
             x: 12px;
@@ -44,22 +78,11 @@ export component WallpaperCard inherits Rectangle {
                 vertical-alignment: center;
             }
         }
-
-        Text {
-            x: 12px;
-            y: 48px;
-            width: parent.width - 24px;
-            height: 20px;
-            text: "Saved live wallpaper";
-            color: #80d0f5;
-            font-size: 13px;
-            overflow: elide;
-        }
     }
 
     Text {
         x: 12px;
-        y: 110px;
+        y: 154px;
         width: parent.width - 24px;
         height: 24px;
         text: data.title;
@@ -71,7 +94,7 @@ export component WallpaperCard inherits Rectangle {
 
     Text {
         x: 12px;
-        y: 140px;
+        y: 184px;
         width: parent.width - 24px;
         height: 18px;
         text: data.path;
@@ -82,10 +105,10 @@ export component WallpaperCard inherits Rectangle {
 
     Text {
         x: 12px;
-        y: 160px;
+        y: 208px;
         width: parent.width - 24px;
         height: 14px;
-        text: "Ready for your wallpaper library";
+        text: data.has_thumbnail ? "Static thumbnail cached locally" : "Waiting for thumbnail preview";
         color: #677188;
         font-size: 11px;
         overflow: elide;

@@ -114,7 +114,8 @@ export component AppWindow inherits Window {
                             height: 100%;
                             private property <length> grid-gap: 16px;
                             private property <length> grid-padding: 20px;
-                            private property <length> card-height: 182px;
+                            // Cards are taller now so the thumbnail preview gets more space.
+                            private property <length> card-height: 238px;
                             private property <int> column-count:
                                 self.visible-width > 1420px ? 5 :
                                 self.visible-width > 1160px ? 4 :

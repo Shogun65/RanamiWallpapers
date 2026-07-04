@@ -19,3 +19,5 @@ build
 target
 *.txt
 *.json
+# Runtime preview images generated from wallpaper videos.
+cache-wallpaper-thumbnails/
