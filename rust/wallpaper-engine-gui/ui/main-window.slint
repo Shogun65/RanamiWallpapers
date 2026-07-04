@@ -15,6 +15,7 @@ export component AppWindow inherits Window {
 
     callback import_wallpaper();
     callback wallpaper_card_double_clicked(string);
+    // Rust owns the wallpaper list and pushes card data into this window property.
     in-out property <[WallpaperCardData]> wallpapers: [];
 
     VerticalBox {
@@ -24,7 +25,7 @@ export component AppWindow inherits Window {
             padding: 16px;
             spacing: 16px;
             
-            // left side sidebar
+            // Keep navigation actions separate from the wallpaper library area.
             Sidebar {
                 width: 220px;
                 import_wallpaper => {
@@ -32,7 +33,7 @@ export component AppWindow inherits Window {
                 }
             }
 
-            // right side one
+            // The right side is the actual library view with header, empty state, and card grid.
             Rectangle {
 
                 background: #111318;
@@ -117,11 +118,15 @@ export component AppWindow inherits Window {
                             private property <length> grid-padding: 20px;
                             // Cards are taller now so the thumbnail preview gets more space.
                             private property <length> card-height: 238px;
+                            // Slint does not have a built-in masonry/grid here, so the window
+                            // computes a simple responsive column count from the visible width.
                             private property <int> column-count:
                                 self.visible-width > 1420px ? 5 :
                                 self.visible-width > 1160px ? 4 :
                                 self.visible-width > 900px ? 3 :
                                 self.visible-width > 620px ? 2 : 1;
+                            // Card width grows and shrinks with the viewport, but stays inside
+                            // the same min/max size range as WallpaperCard itself.
                             private property <length> card-width:
                                 min(
                                     280px,
@@ -153,6 +158,7 @@ export component AppWindow inherits Window {
                                 width: library-scroll.card-width;
                                 height: library-scroll.card-height;
                                 data: wallpaper;
+                                // Bubble card interactions back to Rust with the saved wallpaper path.
                                 wallpaper_card_double_clicked(wallpaper_path) => {
                                     root.wallpaper_card_double_clicked(wallpaper_path);
                                 }

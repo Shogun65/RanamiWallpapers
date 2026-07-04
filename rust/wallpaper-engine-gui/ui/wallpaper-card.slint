@@ -7,7 +7,7 @@ export struct WallpaperCardData {
 }
 
 export component WallpaperCard inherits Rectangle {
-
+    // Each card receives everything it needs from Rust in one small data object.
     in property <WallpaperCardData> data;
     callback wallpaper_card_double_clicked(string);
 
@@ -63,6 +63,7 @@ export component WallpaperCard inherits Rectangle {
             background: #9612c7;
             border-radius: 12px;
 
+            // Small format pill so the card still tells you what kind of file it points to.
             Text {
                 text: data.format;
                 color: white;
@@ -108,6 +109,7 @@ export component WallpaperCard inherits Rectangle {
         overflow: elide;
     }
 
+    // Let the whole card surface act like one button instead of requiring precise clicks.
     // Send the wallpaper path only on double click, so single clicks stay harmless.
     touch-area := TouchArea {
         double-clicked => {

@@ -6,7 +6,7 @@ mod thumbnail_cache;
 
 use std::path::Path;
 
-use file_saver::file_saver::{read_saved_wallpapers, save_file_2};
+use file_saver::file_saver::{read_existing_saved_wallpapers, save_file_2};
 use init_file_picker::init::init_a_file_picker;
 use shared::log_err::err_log;
 use shared::save_wallpaper::SaveWallpaper;
@@ -15,21 +15,22 @@ use thumbnail_cache::thumbnail_cache::load_or_create_thumbnail;
 
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
+    // Populate the library immediately so saved wallpapers appear on launch.
     refresh_wallpaper_library(&ui);
 
+    // Slint callbacks can outlive this stack frame, so keep only a weak UI handle inside them.
     let ui_handle = ui.as_weak();
 
-    ui.on_wallpaper_card_double_clicked(|wallpaper_path| {
+    ui.on_wallpaper_card_double_clicked(move |wallpaper_path| {
         // Double-clicking a wallpaper card gives you the saved wallpaper path here.
-        // Use `wallpaper_path` however you want for the low-level wallpaper logic.
-        let a = wallpaper_path;
-        println!("wallpaper_path: {}", a);
+        println!("wallpaper_path: {}", wallpaper_path);
     });
 
     ui.on_import_wallpaper(move || {
         let ui_handle = ui_handle.clone();
 
         slint::spawn_local(async move {
+            // The file picker is async, so run it on Slint's event loop without freezing the window.
             let file_handle = init_a_file_picker().await;
 
             if let Some(file_handle) = file_handle {
@@ -51,10 +52,10 @@ fn main() -> Result<(), slint::PlatformError> {
 
 fn refresh_wallpaper_library(ui: &AppWindow) {
     // Rebuild the whole card model from the saved JSON file whenever the library changes.
-    let saved_wallpapers = match read_saved_wallpapers() {
+    let saved_wallpapers = match read_existing_saved_wallpapers() {
         Ok(saved_wallpapers) => saved_wallpapers,
         Err(err) => {
-            err_log(&format!("Error on read_saved_wallpapers: {}", err));
+            err_log(&format!("Error on read_existing_saved_wallpapers: {}", err));
             ui.set_wallpapers(ModelRc::new(VecModel::from_iter(std::iter::empty::<
                 WallpaperCardData,
             >())));
@@ -68,6 +69,8 @@ fn refresh_wallpaper_library(ui: &AppWindow) {
 }
 
 fn to_wallpaper_card_data(saved_wallpaper: SaveWallpaper) -> WallpaperCardData {
+    // Slint cards use display-friendly strings and an optional cached preview image,
+    // so convert the raw saved JSON entry into the UI shape here.
     let title = wallpaper_title(&saved_wallpaper);
     let format = wallpaper_format(&saved_wallpaper.path);
     // Try to attach a cached preview image to the card. If thumbnail generation fails,
@@ -91,6 +94,7 @@ fn to_wallpaper_card_data(saved_wallpaper: SaveWallpaper) -> WallpaperCardData {
 }
 
 fn wallpaper_title(saved_wallpaper: &SaveWallpaper) -> String {
+    // Prefer the saved name, but fall back to the file name when older data is blank or "nan".
     if !saved_wallpaper.name.trim().is_empty() && saved_wallpaper.name.trim() != "nan" {
         return saved_wallpaper.name.clone();
     }
@@ -103,6 +107,7 @@ fn wallpaper_title(saved_wallpaper: &SaveWallpaper) -> String {
 }
 
 fn wallpaper_format(path: &str) -> String {
+    // The card badge uses the file extension, or a generic label when the path has no extension.
     Path::new(path)
         .extension()
         .and_then(|extension| extension.to_str())

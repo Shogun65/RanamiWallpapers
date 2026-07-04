@@ -1,5 +1,4 @@
 pub(crate) mod file_saver {
-
     use rfd::FileHandle;
     use shared::save_wallpaper::SaveWallpaper;
     use std::ffi::OsStr;
@@ -7,10 +6,12 @@ pub(crate) mod file_saver {
     use std::io::{Read, Write};
     use std::path::{Path, PathBuf};
 
+    // The GUI keeps its wallpaper library in one json file beside the executable / working dir.
     const SAVE_WALLPAPERS_PATH: &str = "Save-Wallpapers.json";
 
     #[allow(dead_code)]
     pub(crate) fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error> {
+        // Legacy single-path storage kept for reference while the app now uses json lists.
         let mut path_file = OpenOptions::new()
             .write(true)
             .create(true)
@@ -27,6 +28,7 @@ pub(crate) mod file_saver {
 
     #[allow(dead_code)]
     pub fn read_file_1() -> Option<String> {
+        // Matches save_file_1 above: older experiments read just one saved wallpaper path.
         let mut video_path_file = OpenOptions::new()
             .read(true)
             .write(true)
@@ -41,23 +43,34 @@ pub(crate) mod file_saver {
         return Some(video_path);
     }
 
-    /*
-
-        New read and save version here that use json
-
-    */
-
     pub fn read_saved_wallpapers() -> Result<Vec<SaveWallpaper>, std::io::Error> {
+        // Missing json simply means the user has not imported anything yet.
         if !Path::new(SAVE_WALLPAPERS_PATH).exists() {
             return Ok(Vec::new());
         }
 
         let json = fs::read_to_string(SAVE_WALLPAPERS_PATH)?;
 
+        // Invalid json should not crash the GUI; treat it like an empty library for now.
         Ok(serde_json::from_str(&json).unwrap_or_default())
     }
 
+    pub fn read_existing_saved_wallpapers() -> Result<Vec<SaveWallpaper>, std::io::Error> {
+        // Drop saved entries whose video file no longer exists and sync the json file to match.
+        let mut saved_wallpapers = read_saved_wallpapers()?;
+        let original_len = saved_wallpapers.len();
+
+        saved_wallpapers.retain(|wallpaper| Path::new(&wallpaper.path).exists());
+
+        if saved_wallpapers.len() != original_len {
+            write_saved_wallpapers(&saved_wallpapers)?;
+        }
+
+        Ok(saved_wallpapers)
+    }
+
     pub fn save_file_2(file_handle: FileHandle) -> Result<(), std::io::Error> {
+        // Save both the original path and a friendly card title derived from the file name.
         let video_path = file_handle.path().to_string_lossy().to_string();
 
         let wallpaper_name = file_handle
@@ -74,6 +87,7 @@ pub(crate) mod file_saver {
 
         let mut vec_wallpaper = read_saved_wallpapers()?;
 
+        // Importing the same path twice should refresh its saved name instead of duplicating the card.
         if let Some(existing_wallpaper) = vec_wallpaper
             .iter_mut()
             .find(|wallpaper| wallpaper.path == save_wallpaper.path)
@@ -88,5 +102,14 @@ pub(crate) mod file_saver {
         fs::write(SAVE_WALLPAPERS_PATH, json)?;
 
         return Ok(());
+    }
+
+    fn write_saved_wallpapers(saved_wallpapers: &[SaveWallpaper]) -> Result<(), std::io::Error> {
+        // Shared helper so cleanup and import flows both write json the same way.
+        let json = serde_json::to_string_pretty(saved_wallpapers)?;
+
+        fs::write(SAVE_WALLPAPERS_PATH, json)?;
+
+        Ok(())
     }
 }

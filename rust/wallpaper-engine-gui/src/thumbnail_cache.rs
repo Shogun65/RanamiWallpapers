@@ -149,6 +149,8 @@ pub(crate) mod thumbnail_cache {
     }
 
     fn ffmpeg_candidates() -> Vec<PathBuf> {
+        // Search a few practical locations before relying on PATH, because shipped builds
+        // often keep ffmpeg.exe beside the app or inside the target release folder.
         let mut candidates = Vec::new();
 
         // First try locations near the running GUI executable.

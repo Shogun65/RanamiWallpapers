@@ -2,7 +2,6 @@ import { VerticalBox } from "std-widgets.slint";
 import { SidebarButton } from "sidebar-button.slint";
 
 export component Sidebar inherits Rectangle {
-    
     background: #171a22;
     width: 220px;
     border-radius: 8px;
@@ -21,27 +20,24 @@ export component Sidebar inherits Rectangle {
             }
         }
 
+        // Simple separator between the one live action and the future sections below it.
         Rectangle {
             height: 1px;
             border-radius: 8px;
             background: #2a2d35;
         }
 
-        SidebarButton { // just a place holder for now
+        // These buttons are visual placeholders for features that can be wired later.
+        SidebarButton {
             title : "⭐ Favorites";
         }
 
-        SidebarButton { // just a place holder for now
+        SidebarButton {
             title : "⚙ Settings";
         }
 
-        SidebarButton { // just a place holder for now
+        SidebarButton {
             title : "❕About";
         }
-
-        // in future SidebarButton here or divider 
-
-
     }
-
 }
