@@ -2,6 +2,7 @@ export struct WallpaperCardData {
     title: string,
     path: string,
     format: string,
+    details: string,
     thumbnail: image,
     has_thumbnail: bool,
 }
@@ -103,7 +104,7 @@ export component WallpaperCard inherits Rectangle {
         y: 208px;
         width: parent.width - 24px;
         height: 14px;
-        text: data.has_thumbnail ? "Static thumbnail cached locally" : "Waiting for thumbnail preview";
+        text: data.details;
         color: #7d7296;
         font-size: 11px;
         overflow: elide;

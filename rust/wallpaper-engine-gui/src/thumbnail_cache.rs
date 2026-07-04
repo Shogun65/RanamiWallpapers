@@ -62,7 +62,7 @@ pub(crate) mod thumbnail_cache {
     }
 
     fn generate_thumbnail(video_path: &Path, thumbnail_path: &Path) -> Result<(), String> {
-        let ffmpeg_command = ffmpeg_command();
+        let ffmpeg_command = ffmpeg_command_path();
 
         // Grab one frame around 1 second in and crop it to a card-friendly preview size.
         let status = Command::new(&ffmpeg_command)
@@ -140,46 +140,49 @@ pub(crate) mod thumbnail_cache {
         Ok(thumbnail_modified < video_modified)
     }
 
-    fn ffmpeg_command() -> PathBuf {
-        ffmpeg_candidates()
+    pub fn ffmpeg_command_path() -> PathBuf {
+        command_path("ffmpeg.exe")
+    }
+
+    pub fn ffprobe_command_path() -> PathBuf {
+        command_path("ffprobe.exe")
+    }
+
+    fn command_path(binary_name: &str) -> PathBuf {
+        command_candidates(binary_name)
             .into_iter()
             .find(|candidate| candidate.exists())
             // If none of our guessed paths exists, fall back to PATH lookup.
-            .unwrap_or_else(|| PathBuf::from("ffmpeg.exe"))
+            .unwrap_or_else(|| PathBuf::from(binary_name))
     }
 
-    fn ffmpeg_candidates() -> Vec<PathBuf> {
+    fn command_candidates(binary_name: &str) -> Vec<PathBuf> {
         // Search a few practical locations before relying on PATH, because shipped builds
-        // often keep ffmpeg.exe beside the app or inside the target release folder.
+        // often keep ffmpeg / ffprobe beside the app or inside the target release folder.
         let mut candidates = Vec::new();
 
         // First try locations near the running GUI executable.
         if let Ok(current_exe) = env::current_exe() {
             if let Some(exe_dir) = current_exe.parent() {
-                candidates.push(exe_dir.join("ffmpeg.exe"));
+                candidates.push(exe_dir.join(binary_name));
 
                 if let Some(target_dir) = exe_dir.parent() {
-                    candidates.push(target_dir.join("release").join("ffmpeg.exe"));
-                    candidates.push(target_dir.join("debug").join("ffmpeg.exe"));
+                    candidates.push(target_dir.join("release").join(binary_name));
+                    candidates.push(target_dir.join("debug").join(binary_name));
                 }
             }
         }
 
-        // Then try common dev paths in this repo, including rust/target/release where you placed ffmpeg.exe.
+        // Then try common dev paths in this repo, including rust/target/release where you placed the binaries.
         if let Ok(current_dir) = env::current_dir() {
-            candidates.push(current_dir.join("ffmpeg.exe"));
-            candidates.push(
-                current_dir
-                    .join("target")
-                    .join("release")
-                    .join("ffmpeg.exe"),
-            );
+            candidates.push(current_dir.join(binary_name));
+            candidates.push(current_dir.join("target").join("release").join(binary_name));
             candidates.push(
                 current_dir
                     .join("rust")
                     .join("target")
                     .join("release")
-                    .join("ffmpeg.exe"),
+                    .join(binary_name),
             );
         }
 

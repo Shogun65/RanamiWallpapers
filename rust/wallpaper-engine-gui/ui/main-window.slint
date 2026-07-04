@@ -5,7 +5,7 @@ import { WallpaperCard, WallpaperCardData } from "wallpaper-card.slint";
 export { WallpaperCardData } from "wallpaper-card.slint";
 
 export component AppWindow inherits Window {
-    width: 1200px;
+    width: 1250px;
     height: 700px;
 
     icon: @image-url("../assets/Alive-Wallpaper-Engine.png");
@@ -46,7 +46,7 @@ export component AppWindow inherits Window {
                     spacing: 16px;
 
                     Rectangle {
-                        height: 72px;
+                        height: 58px;
                         background: #181224;
                         border-radius: 12px;
                         border-width: 1px;
@@ -61,17 +61,6 @@ export component AppWindow inherits Window {
                             color: white;
                             font-size: 22px;
                             font-weight: 600;
-                            overflow: elide;
-                        }
-
-                        Text {
-                            x: 18px;
-                            y: 42px;
-                            width: parent.width - 36px;
-                            height: 16px;
-                            text: "Imported wallpapers will arrange themselves here automatically.";
-                            color: #b3a6cc;
-                            font-size: 12px;
                             overflow: elide;
                         }
                     }
