@@ -1,4 +1,5 @@
 pub mod namepipe{
+
     use tokio::io::AsyncWriteExt;
     use tokio::net::windows::named_pipe::ClientOptions;
     use shared::namepipe::{NamePipeCommands, PIPE_NAME};
@@ -51,7 +52,10 @@ pub mod namepipe{
 
     fn get_json_of_struct(video_path: String) -> Result<String, std::io::Error>{
 
-        let namepipe = NamePipeCommands{video_path : video_path};
+        let namepipe = NamePipeCommands{
+            video_path : video_path, 
+            wallpaper_changed : true
+        };
 
         println!("[DEBUG] namepipe: {:#?}", namepipe);
 

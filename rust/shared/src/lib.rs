@@ -57,6 +57,7 @@ pub mod namepipe{
     #[derive(Debug, Clone, Default, Serialize, Deserialize)]
     pub struct NamePipeCommands{
         pub video_path: String,
+        pub wallpaper_changed : bool,
     }
 
     pub const PIPE_NAME: &str = r"\\.\pipe\RanamiWallpapers";
