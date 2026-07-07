@@ -5937,7 +5937,9 @@ dependencies = [
 name = "wallpaper-engine-client"
 version = "0.1.0"
 dependencies = [
+ "serde_json",
  "shared",
+ "tokio",
  "windows 0.62.2",
  "windows-result 0.4.1",
 ]
