@@ -33,11 +33,16 @@ pub(crate) mod client_init
 
 mod files
 {
-    pub(super) const FILES_CHECK_LIST: [&str; 10] = ["swscale-8.dll", "swresample-5.dll", 
+    pub(super) const FILES_CHECK_LIST: [&str; 12] = [
+        
+                                                    "swscale-8.dll", "swresample-5.dll", 
                                                     "postproc-58.dll", "avutil-59.dll",
                                                     "avformat-61.dll", "avfilter-10.dll",
                                                     "avdevice-61.dll", "avcodec-61.dll",
-                                                    "AliveWallpaperEngine.exe","alive-wallpaper-tray.exe"];
+                                                    "AliveWallpaperEngine.exe","alive-wallpaper-tray.exe",
+                                                    "wallpaper-engine-gui.exe", "ffmpeg.exe"
+
+                                                    ];
 }
 
 pub(crate) mod log_err
