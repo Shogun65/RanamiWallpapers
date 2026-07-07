@@ -49,3 +49,15 @@ pub mod save_wallpaper {
         pub path: String,
     }
 }
+
+pub mod namepipe{
+
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+    pub struct NamePipeCommands{
+        pub video_path: String,
+    }
+
+    pub const PIPE_NAME: &str = r"\\.\pipe\RanamiWallpapers";
+}

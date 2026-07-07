@@ -3,6 +3,7 @@ slint::include_modules!();
 mod file_saver;
 mod init_file_picker;
 mod thumbnail_cache;
+mod namepipe;
 
 use std::{
     fs,
@@ -19,6 +20,8 @@ use file_saver::file_saver::{read_existing_saved_wallpapers, save_file_2};
 use init_file_picker::init::init_a_file_picker;
 use shared::log_err::err_log;
 use shared::save_wallpaper::SaveWallpaper;
+use namepipe::namepipe::{get_runtime, sent_struct_of_data_to_client};
+
 use slint::{
     ComponentHandle, Image, Model, ModelRc, Rgba8Pixel, SharedPixelBuffer, SharedString, VecModel,
 };
@@ -28,7 +31,16 @@ use thumbnail_cache::thumbnail_cache::{
 };
 
 fn main() -> Result<(), slint::PlatformError> {
+    
     let ui = AppWindow::new()?;
+
+    /* 
+        lets get the runtime here and his handle
+    */
+
+    let runtime = get_runtime().unwrap();// get panic for now maybe for forever who knows
+    let handle = runtime.handle().clone();
+
     let refresh_generation = Arc::new(AtomicU64::new(0));
     // Populate the library immediately so saved wallpapers appear on launch.
     refresh_wallpaper_library(&ui, &refresh_generation);
@@ -38,8 +50,10 @@ fn main() -> Result<(), slint::PlatformError> {
     let refresh_generation_for_import = Arc::clone(&refresh_generation);
 
     ui.on_wallpaper_card_double_clicked(move |wallpaper_path| {
-        // Double-clicking a wallpaper card gives you the saved wallpaper path here.
-        println!("wallpaper_path: {}", wallpaper_path);
+        // Double-clicking a wallpaper card gives you the saved wallpaper path here
+        println!("[DEBUG] wallpaper_path: {}", wallpaper_path);
+        sent_struct_of_data_to_client(wallpaper_path.to_string(), &handle);
+        println!("[DEBUG] sent the data!");
     });
 
     ui.on_import_wallpaper(move || {

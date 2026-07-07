@@ -93,7 +93,9 @@ pub(crate) mod file_saver {
             .find(|wallpaper| wallpaper.path == save_wallpaper.path)
         {
             existing_wallpaper.name = save_wallpaper.name;
-        } else {
+        } 
+        
+        else {
             vec_wallpaper.push(save_wallpaper);
         }
 
