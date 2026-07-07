@@ -9,7 +9,7 @@ pub(crate) mod init_engine
         client_hwnd: usize) -> Result<Child, std::io::Error>
     {
 
-        let process = Command::new("AliveWallpaperEngine.exe")
+        let process = Command::new("RanamiWallpapers.exe")
         .arg(video_path)
         .arg(buffer_count)
         .arg(client_hwnd.to_string())

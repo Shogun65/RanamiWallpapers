@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(AliveWallpaperEngine)
+project(RanamiWallpapers)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(AliveWallpaperEngine WIN32
+add_executable(RanamiWallpapers WIN32
     main.cpp
     Engine.cpp
     DComp/DComp.cpp
@@ -21,17 +21,17 @@ add_executable(AliveWallpaperEngine WIN32
 )
 
 # Include directories
-target_include_directories(AliveWallpaperEngine PRIVATE
+target_include_directories(RanamiWallpapers PRIVATE
     ${CMAKE_SOURCE_DIR}
     "C:/Users/gmy87/OneDrive/Documents/codeing lib/ffmpeg-7.1.1-full_build-shared/include"
 )
 
 # Link FFmpeg libs
-target_link_directories(AliveWallpaperEngine PRIVATE
+target_link_directories(RanamiWallpapers PRIVATE
     "C:/Users/gmy87/OneDrive/Documents/codeing lib/ffmpeg-7.1.1-full_build-shared/lib"
 )
 
-target_link_libraries(AliveWallpaperEngine PRIVATE
+target_link_libraries(RanamiWallpapers PRIVATE
     avformat
     avcodec
     avutil
@@ -39,14 +39,14 @@ target_link_libraries(AliveWallpaperEngine PRIVATE
 )
 
 # Windows libs
-target_link_libraries(AliveWallpaperEngine PRIVATE
+target_link_libraries(RanamiWallpapers PRIVATE
     d3d11
     dxgi
     dcomp
     Ole32
 )
 
-target_compile_definitions(AliveWallpaperEngine PRIVATE
+target_compile_definitions(RanamiWallpapers PRIVATE
     UNICODE
     _UNICODE
 )

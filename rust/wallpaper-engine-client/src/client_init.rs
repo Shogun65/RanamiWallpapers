@@ -39,7 +39,7 @@ mod files
                                                     "postproc-58.dll", "avutil-59.dll",
                                                     "avformat-61.dll", "avfilter-10.dll",
                                                     "avdevice-61.dll", "avcodec-61.dll",
-                                                    "AliveWallpaperEngine.exe","alive-wallpaper-tray.exe",
+                                                    "RanamiWallpapers.exe","alive-wallpaper-tray.exe",
                                                     "wallpaper-engine-gui.exe", "ffmpeg.exe"
 
                                                     ];
