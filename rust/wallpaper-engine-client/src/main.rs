@@ -13,12 +13,18 @@ mod main_loop;
 use client_init::client_init::client_init;
 use client_init::error::ErrorClient;
 use client_init::log_err::err_log;
-use window::windows::{init_window, ENGINE_HWND};
+use window::windows::{init_window};
 use arg::{init, error};
 use shared::namepipe::{NamePipeCommands};
 use std::sync::{Arc, Mutex};
-use client_loop::init_loop::sleep_300_micros;
-use engine::init_engine::run_wallpaper_engine;
+use crate::namepipe::init_namepipe::run_namepipe_server;
+
+use tokio::runtime::{self, Handle, Runtime};
+
+// use client_loop::init_loop::sleep_300_micros;
+// use engine::init_engine::run_wallpaper_engine;
+// use namepipe::init_namepipe::run_namepipe_server;
+
 
 fn main() 
 {
@@ -33,7 +39,7 @@ fn main()
             err_log(&format!("Console Error: {}", err)); return;},
     }
     
-    let _namepipecommands: Arc<Mutex<NamePipeCommands>> = Arc::new(
+    let namepipecommands: Arc<Mutex<NamePipeCommands>> = Arc::new(
                                                   Mutex::new(
                                                         NamePipeCommands{
                                                             video_path : "NONE".to_string(), 
@@ -67,24 +73,54 @@ fn main()
         },
     };
 
-    let _ = run_wallpaper_engine("C:\\Users\\gmy87\\Downloads\\furina-masquerade.mp4",
-     "3", client_hwnd);
+    // let _ = run_wallpaper_engine("C:\\Users\\gmy87\\Downloads\\furina-masquerade.mp4",
+    //  "3", client_hwnd);
 
-    sleep_300_micros();
+    // sleep_300_micros();
 
-    if ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed) != 0{
-        println!("ENGINE_HWND: {}", ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed));
-        current_engine_hwnd = ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed);
-        println!("current_engine_hwnd: {}", current_engine_hwnd);
-    }
-    else{
-        println!("current_engine_hwnd: {}", current_engine_hwnd);
-        println!("ENGINE_HWND: {}", ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed));
-    }
+    // if ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed) != 0{
+    //     println!("ENGINE_HWND: {}", ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed));
+    //     current_engine_hwnd = ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed);
+    //     println!("current_engine_hwnd: {}", current_engine_hwnd);
+    // }
+    // else{
+    //     println!("current_engine_hwnd: {}", current_engine_hwnd);
+    //     println!("ENGINE_HWND: {}", ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed));
+    // }
 
-    let _ = _window_handle.join();
+    // let _ = _window_handle.join();
 
     // let _ = init_loop::run(client_hwnd, namepipecommands);
+
+    let runtime_data = RuntimeAndHandle::new();
+
+    if runtime_data.is_none(){return;} // dont forget this
+
+    run_namepipe_server(namepipecommands.clone(), &runtime_data.unwrap().handle); // ofc unwrap here is safe
+
 }
 
 
+struct RuntimeAndHandle{
+    
+    handle : Handle,
+
+    #[allow(dead_code)]
+    runtime : Runtime // poor runtime too bad we just neeed him for his handle soo sad maybe in future we need you
+}
+
+
+impl RuntimeAndHandle {
+    fn new() -> Option<Self>{
+        
+        let runtime = Runtime::new();
+
+        if let Ok(runtime) = runtime{
+            let handle = runtime.handle().clone();
+            return Some(RuntimeAndHandle { runtime, handle });
+        };
+
+        err_log(&format!("error on RuntimeAndHandle new(): {}", runtime.unwrap_err()));
+        return None;
+    }
+}
