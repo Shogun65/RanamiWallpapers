@@ -12,6 +12,7 @@ pub mod message {
     pub const WM_ENGINE_EXIT: u32 = WM_APP + 2;
     pub const WM_ENGINE_BOOTUP_SUCCESS: u32 = WM_APP + 3;
     pub const WM_ENGINE_BOOTUP_FAILED: u32 = WM_APP + 4;
+    pub const WM_ENGINE_SENT_HWND: u32 = WM_APP +5;
 }
 
 pub mod log_err {
