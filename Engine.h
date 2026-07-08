@@ -23,8 +23,7 @@ public:
 	void testDXandSwapchin(HINSTANCE hInstance);
 	void testDXandswapanddcomp(HINSTANCE hInstance);
 	void MakeWindowRunwhitWorkerWandRunDXandswapchin(HINSTANCE hInstance);
-	void MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hInstance, 
-		const char* filepart, int sizeofbuffer);
+	void MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hInstance);
 //  ^^^^^^^^^^^^^^^^^^^
 
 	~Engine();

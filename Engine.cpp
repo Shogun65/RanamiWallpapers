@@ -107,8 +107,7 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchin(HINSTANCE hInstance)
 	
 }
 
-void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hInstance, 
-	const char* fileparth, int sizeofbuffer)
+void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hInstance)
 {
 	_window.InitDebugConsole();
 

@@ -142,38 +142,34 @@ int WINAPI wWinMain(
     * Do every system chack here! because the app even runs (i think it okay for now)
     */
 	
-    if(getsystembattryinfo() != 0) // if return is not 0 than exit the app!
-    {
-        std::exit(EXIT_SUCCESS); // why EXIT_SUCCESS because it not a Error
-                                // app can run on battry!
-    }
+    // if(getsystembattryinfo() != 0) // if return is not 0 than exit the app!
+    // {
+    //     std::exit(EXIT_SUCCESS); // why EXIT_SUCCESS because it not a Error
+    //                             // app can run on battry!
+    // }
 
 
-	int buffersize = 3;
+	// int buffersize = 3;
 
 	Engine engine;
 
-	std::string video_path = LoadPath();
+	// if(video_path.empty())
+	// {
+	// 	video_path = PickVideoFile();
+	// 	if(!video_path.empty())
+	// 	{
+	// 		SavePath(video_path);
+	// 	}
+	// }
 
-	if(video_path.empty())
-	{
-		video_path = PickVideoFile();
-		if(!video_path.empty())
-		{
-			SavePath(video_path);
-		}
-	}
-
-	if(video_path.empty())
-	{
-		MessageBox(nullptr, L"Video Path not exist!", L"Error", MB_ICONERROR);
-		return EXIT_FAILURE;
-	}
+	// if(video_path.empty())
+	// {
+	// 	MessageBox(nullptr, L"Video Path not exist!", L"Error", MB_ICONERROR);
+	// 	return EXIT_FAILURE;
+	// }
 
 	engine.MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(
-		hInstance,
-		video_path.c_str(), 
-		buffersize);
+		hInstance);
 	
 	return EXIT_SUCCESS;
 }
