@@ -9,6 +9,7 @@
 #include "FFmpeg/FFmpeg.h"
 #include "DXVA/DXVA.h"
 #include "Parse/Parse.h"
+#include "PostMessageW/PostMessageW.h"
 #include <iostream>
 
 class Engine
@@ -41,7 +42,12 @@ private:
 	FramePool _framepool;
 	DXVA _dxva;
 	Parse _parse;
+	MyPostMessage _mypostmessage;
 
 	//this is for decoder loop
 	std::thread _DecodeingLoop_Thread;
+
+	// some windows message here check docs for mroe info (hopefully i update tham)
+
+	uint32_t WM_ENGINE_SENT_HWND = WM_APP + 5;
 };

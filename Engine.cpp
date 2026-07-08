@@ -155,10 +155,17 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hIn
 
 	/*
 	
-		PostMessageW call here! (todo!)
+		PostMessageW call here!
 	
 	*/
 
+
+	_mypostmessage.postmessage(args_data.client_hwnd,
+		WM_ENGINE_SENT_HWND,
+		0, reinterpret_cast<LPARAM>(_window.GetHWND()));
+
+
+	/*^^^^^^^^^^^^^^^*/
 	_window.MessageLoopRun([this]() 
 	{
 		_render.RenderFrame(_swapchin.GetRTVOfBackBuffer(),
