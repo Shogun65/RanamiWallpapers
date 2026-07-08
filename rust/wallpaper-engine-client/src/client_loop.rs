@@ -64,19 +64,29 @@ pub mod init_loop{
                     }
                     
                     state.wallpaper_changed = false; // do not forget this and i mean it dont forget this
+                    break;
                 }
             }
             sleep_300_micros();
         }
         
+        // run_3(
+        //     ranami_child
+        // );
 
         return Ok(());
     }
 
-    fn run_3(){}
+    fn run_3(
+        ranami_core_child : Child
+    )
+    {
+        
+    }
 
-    fn sleep_300_micros(){
-        thread::sleep(time::Duration::from_micros(300));
+    pub fn sleep_300_micros(){
+        thread::sleep(time::Duration::from_micros(5000));
+        //thread::sleep(time::Duration::from_secs(5));
     }
     
 }

@@ -8,18 +8,21 @@ mod init_tray;
 mod init_gui;
 mod client_loop;
 mod namepipe;
+mod main_loop;
 
 use client_init::client_init::client_init;
 use client_init::error::ErrorClient;
 use client_init::log_err::err_log;
-use window::windows::init_window;
+use window::windows::{init_window, ENGINE_HWND};
 use arg::{init, error};
 use shared::namepipe::{NamePipeCommands};
 use std::sync::{Arc, Mutex};
-use client_loop::init_loop;
+use client_loop::init_loop::sleep_300_micros;
+use engine::init_engine::run_wallpaper_engine;
 
 fn main() 
 {
+    let mut current_engine_hwnd: usize = 0;
 
     // that init fun for arg parse.. well sometime nameing get messy but anyways
     match init::init() {
@@ -30,7 +33,7 @@ fn main()
             err_log(&format!("Console Error: {}", err)); return;},
     }
     
-    let namepipecommands: Arc<Mutex<NamePipeCommands>> = Arc::new(
+    let _namepipecommands: Arc<Mutex<NamePipeCommands>> = Arc::new(
                                                   Mutex::new(
                                                         NamePipeCommands{
                                                             video_path : "NONE".to_string(), 
@@ -64,7 +67,24 @@ fn main()
         },
     };
 
-    let _ = init_loop::run(client_hwnd, namepipecommands);
+    let _ = run_wallpaper_engine("C:\\Users\\gmy87\\Downloads\\furina-masquerade.mp4",
+     "3", client_hwnd);
+
+    sleep_300_micros();
+
+    if ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed) != 0{
+        println!("ENGINE_HWND: {}", ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed));
+        current_engine_hwnd = ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed);
+        println!("current_engine_hwnd: {}", current_engine_hwnd);
+    }
+    else{
+        println!("current_engine_hwnd: {}", current_engine_hwnd);
+        println!("ENGINE_HWND: {}", ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed));
+    }
+
+    let _ = _window_handle.join();
+
+    // let _ = init_loop::run(client_hwnd, namepipecommands);
 }
 
 
