@@ -1,11 +1,14 @@
 pub(crate) mod windows{
-    use std::thread::{self, JoinHandle};
+    use std::{os::raw::c_void, thread::{self, JoinHandle}};
     use windows::Win32::Foundation::*; // idc man i want to code not to do this all day
     use windows::Win32::UI::WindowsAndMessaging::*;
     use windows::core::w;
     use super::super::client_init::log_err::err_log;
     use std::sync::mpsc::{channel, Sender};
+    use shared::message::*; // take all message
+    use std::sync::atomic::{AtomicUsize, Ordering};
 
+    pub static ENGINE_HWND : AtomicUsize = AtomicUsize::new(0); 
 
     fn run_main_window(tx: Sender<usize>) -> JoinHandle<()>
     {
@@ -69,6 +72,17 @@ pub(crate) mod windows{
 
                 WM_DESTROY =>{
                     PostQuitMessage(0);
+                    return LRESULT(0);
+                }
+
+                WM_ENGINE_SENT_HWND =>{
+
+                    let hwnd = HWND(lparam.0 as *mut c_void);
+                    println!("hwnd of engine: {:?}", hwnd);
+                    println!("hwnd of engine(usize): {:?}", hwnd.0 as usize);
+
+                    ENGINE_HWND.store(hwnd.0 as usize, Ordering::Release);
+
                     return LRESULT(0);
                 }
 
