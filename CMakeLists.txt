@@ -18,6 +18,7 @@ add_executable(RanamiWallpapers WIN32
     Window/Window.cpp
     Window/WorkerW.cpp
     Parse/Parse.cpp
+    PostMessageW/PostMessageW.cpp
 )
 
 # Include directories
