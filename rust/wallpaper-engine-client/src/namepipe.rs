@@ -16,12 +16,14 @@ pub mod init_namepipe{
     {
         return handle.spawn(async move{
             loop{
-
+                println!("PIPE_NAME(server): {}", PIPE_NAME);
                 let mut pipe = ServerOptions::new().create(PIPE_NAME).unwrap(); // it not going to failed cmom man
 
                 println!("[DEBUG] pipe is waiting to Connection!");
 
-                let _ = pipe.connect().await;
+                let result = pipe.connect().await;
+
+                println!("result pipe connectL {:?}", result);
 
                 println!("[DEBUG] pipe in conneted!");
 

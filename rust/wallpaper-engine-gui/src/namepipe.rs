@@ -18,7 +18,7 @@ pub mod namepipe{
                 Ok(_) => return,
 
                 Err(err) => {
-                    err_log(&format!("error on sent_data_to_client: {}", err));
+                    err_log(&format!("error on sent_data_to_client: {:#?}", err.raw_os_error()));
                     return;
                 }
             }
@@ -40,6 +40,7 @@ pub mod namepipe{
     async fn sent_data_to_client(video_path: String) -> std::io::Result<()>
     {
 
+        println!("PIPE_NAME(client): {}", PIPE_NAME);
         let mut namepipe = ClientOptions::new()
                                         .open(PIPE_NAME)?;
 

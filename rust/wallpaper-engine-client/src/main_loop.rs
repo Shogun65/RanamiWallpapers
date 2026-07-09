@@ -1,6 +1,6 @@
 
 
-use std::sync::{Arc, Mutex};
+use std::{sync::{Arc, Mutex}, thread, time::Duration};
 use shared::namepipe::NamePipeCommands;
 use crate::window::windows::ENGINE_HWND;
 use std::process::Child;
@@ -49,16 +49,14 @@ pub fn main_loop(
             }
         }
 
+        if let Some(mut_child) = current_child.as_mut(){
+            if let Ok(_exit_status) = mut_child.try_wait(){
+                current_child = None;
+                current_wallpaper = None;
+            }
+        }
 
-
-
-
+        thread::sleep(Duration::from_millis(10));
     }
-
-
-
-
-
-
     return Ok(());
 }
