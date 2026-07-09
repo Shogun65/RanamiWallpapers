@@ -16,11 +16,20 @@ pub fn main_loop(
 {
     let mut current_child: Option<Child> = None;
     let mut current_wallpaper: Option<String> = None;
+    let mut ranami_crash = false;
     let mut currant_hwnd_of_ranami_core: usize = 0;
 
     loop {
         
         let mut next_wallpaper: Option<String> = None;
+
+        if ranami_crash{
+            if let Some(reuse_wallpaper) = current_wallpaper.as_deref(){
+                next_wallpaper = Some(reuse_wallpaper.to_string());
+                current_wallpaper = None;
+            }
+            ranami_crash = false;
+        }
 
         {
             let mut state = namepipecommands.lock();
@@ -37,8 +46,12 @@ pub fn main_loop(
         if let Some(wallpaper_path) = next_wallpaper{
             if current_wallpaper.as_deref() != Some(wallpaper_path.as_str()){
                 if let Some(mut child) = current_child.take(){
-                    let _ = child.kill();// maybe someday i handle this error
-                    let _ = child.wait();
+
+                    let ck = child.kill();
+                    println!("child kill: {:#?}", ck);
+
+                    let cw = child.wait();
+                    println!("child wait: {:#?}", cw);
                 }
             
                 let child = run_wallpaper_engine(
@@ -50,9 +63,16 @@ pub fn main_loop(
         }
 
         if let Some(mut_child) = current_child.as_mut(){
-            if let Ok(_exit_status) = mut_child.try_wait(){
+            if let Ok(Some(exit_status)) = mut_child.try_wait(){
+                println!("Exit status : {}", exit_status);
                 current_child = None;
-                current_wallpaper = None;
+                ranami_crash = true;
+                if exit_status.success(){
+                    println!("success exit code 0");
+                    break;
+                };
+
+                //current_wallpaper = None;
             }
         }
 
