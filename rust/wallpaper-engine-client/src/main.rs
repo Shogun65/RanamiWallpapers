@@ -28,7 +28,6 @@ use tokio::runtime::{self, Handle, Runtime};
 
 fn main() 
 {
-    let mut current_engine_hwnd: usize = 0;
 
     // that init fun for arg parse.. well sometime nameing get messy but anyways
     match init::init() {
@@ -92,11 +91,18 @@ fn main()
 
     // let _ = init_loop::run(client_hwnd, namepipecommands);
 
-    let runtime_data = RuntimeAndHandle::new();
+    let runtime_data = match RuntimeAndHandle::new() {
+        Some(rt) => rt,
+        None => return,
+    };
 
-    if runtime_data.is_none(){return;} // dont forget this
+    run_namepipe_server(
+        namepipecommands.clone(),
+        &runtime_data.handle,
+    );
 
-    run_namepipe_server(namepipecommands.clone(), &runtime_data.unwrap().handle); // ofc unwrap here is safe
+println!("running the main loop");
+let _ = main_loop::main_loop(namepipecommands.clone(), client_hwnd);
 
 }
 
