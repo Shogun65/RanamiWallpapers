@@ -173,16 +173,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "alive-wallpaper-tray"
-version = "0.1.0"
-dependencies = [
- "shared",
- "tao",
- "tray-icon",
- "windows 0.62.2",
-]
-
-[[package]]
 name = "allocator-api2"
 version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4357,6 +4347,41 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
+name = "ranami-wallpapers"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "shared",
+ "tokio",
+ "windows 0.62.2",
+ "windows-result 0.4.1",
+]
+
+[[package]]
+name = "ranami-wallpapers-gui"
+version = "0.1.0"
+dependencies = [
+ "image",
+ "rfd",
+ "serde",
+ "serde_json",
+ "shared",
+ "slint",
+ "slint-build",
+ "tokio",
+]
+
+[[package]]
+name = "ranami-wallpapers-tray"
+version = "0.1.0"
+dependencies = [
+ "shared",
+ "tao",
+ "tray-icon",
+ "windows 0.62.2",
+]
+
+[[package]]
 name = "rand"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5931,31 +5956,6 @@ checksum = "29790946404f91d9c5d06f9874efddea1dc06c5efe94541a7d6863108e3a5e4b"
 dependencies = [
  "same-file",
  "winapi-util",
-]
-
-[[package]]
-name = "wallpaper-engine-client"
-version = "0.1.0"
-dependencies = [
- "serde_json",
- "shared",
- "tokio",
- "windows 0.62.2",
- "windows-result 0.4.1",
-]
-
-[[package]]
-name = "wallpaper-engine-gui"
-version = "0.1.0"
-dependencies = [
- "image",
- "rfd",
- "serde",
- "serde_json",
- "shared",
- "slint",
- "slint-build",
- "tokio",
 ]
 
 [[package]]
