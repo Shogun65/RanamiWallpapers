@@ -2,9 +2,10 @@
 
 use std::{sync::{Arc, Mutex}, thread, time::Duration};
 use shared::namepipe::NamePipeCommands;
-use crate::window::windows::ENGINE_HWND;
+use crate::{client_init::log_err::err_log, window::windows::ENGINE_HWND};
 use std::process::Child;
 use crate::engine::init_engine::run_wallpaper_engine;
+use crate::init_tray::run_tray;
 
 pub fn main_loop(
 
@@ -17,11 +18,13 @@ pub fn main_loop(
     let mut current_child: Option<Child> = None;
     let mut current_wallpaper: Option<String> = None;
     let mut ranami_crash = false;
-    let mut currant_hwnd_of_ranami_core: usize = 0;
+    let mut current_child_tray: Option<Child> = None;
 
     loop {
         
         let mut next_wallpaper: Option<String> = None;
+
+        init_tray(&mut current_child_tray, client_hwnd);
 
         if ranami_crash{
             if let Some(reuse_wallpaper) = current_wallpaper.as_deref(){
@@ -52,6 +55,7 @@ pub fn main_loop(
 
                     let cw = child.wait();
                     println!("child wait: {:#?}", cw);
+                    kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray);
                 }
             
                 let child = run_wallpaper_engine(
@@ -66,13 +70,20 @@ pub fn main_loop(
             if let Ok(Some(exit_status)) = mut_child.try_wait(){
                 println!("Exit status : {}", exit_status);
                 current_child = None;
-                ranami_crash = true;
+                
                 if exit_status.success(){
                     println!("success exit code 0");
+                    // NOTE: tray when click exit on tray it will exit him self but this code is kinda useles
+                    // but it here because maybe if somehow "Ranami core" exit whit exit code 0 so we also kill him(tray)
+                    kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray);
                     break;
                 };
 
-                //current_wallpaper = None;
+                ranami_crash = true;
+                kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray);
+
+
+            
             }
         }
 
@@ -83,4 +94,42 @@ pub fn main_loop(
 
 fn get_engine_hwnd() -> usize{
     return ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed);
+}
+
+fn set_engine_hwnd_to_0(){
+    ENGINE_HWND.store(0, std::sync::atomic::Ordering::Release);
+}
+
+fn init_tray(
+    current_child_tray: &mut Option<Child>, 
+    client_hwnd : usize,
+)
+{
+    
+    if get_engine_hwnd() == 0 {return;} // verry improtands checks
+    if current_child_tray.is_some() {return;}//
+    println!("Engine HWND: {} (init_tray)", get_engine_hwnd());
+    
+    let result_of_tray = run_tray(client_hwnd);
+    if let Ok(child) = result_of_tray{
+        *current_child_tray = Some(child);
+    }
+    else{
+        err_log(&format!("Error on init_tray() on main_loop: {}", 
+        result_of_tray.unwrap_err()));
+    }
+}
+
+fn kill_tray_and_set_engine_hwnd_to_0(tray_child : &mut Option<Child>){
+
+    set_engine_hwnd_to_0(); // verry improtand
+    if let Some(mut tray_child) = tray_child.take(){
+                    
+        let ck = tray_child.kill();
+        println!("tray child kill: {:?}", ck);
+
+        let cw = tray_child.wait();
+        println!("tray child wait: {:?}", cw);
+
+    }
 }

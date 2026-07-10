@@ -28,7 +28,7 @@ fn main() {
 
     let test_menu = MenuItem::new("Test", true, None);
 
-    let exit_menu = MenuItem::new("Exit", true, None);
+    let exit_menu = MenuItem::new("Exit Ranami", true, None);
 
     tray_menu.append(&test_menu).unwrap(); // it not going to give Error belive me
     tray_menu.append(&exit_menu).unwrap();
@@ -51,7 +51,7 @@ fn main() {
     event_loop.run(move|_event, _window_target, control_flow|
     {
         *control_flow = ControlFlow::Wait; // verry impotand to use wait!
-
+ 
         if let Ok(event) = menu_channel.try_recv()
         {
             if event.id == test_menu.id()
@@ -101,7 +101,7 @@ fn get_client_data() -> ClientData
 
                                         expect("No HWND GIVEN!"),
 
-                                         16).unwrap(); // trust me
+                                         10).unwrap(); // trust me
 
     /*
         PID is Optional for now!!!!

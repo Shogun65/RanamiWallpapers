@@ -86,6 +86,11 @@ pub(crate) mod windows{
                     return LRESULT(0);
                 }
 
+                WM_ENGINE_TEST =>{
+                    println!("Get WM_ENGINE_TEST from tray");
+                    return LRESULT(0);
+                }
+
                 _ => return DefWindowProcW(hwnd, msg, wparam, lparam),
             }
             
