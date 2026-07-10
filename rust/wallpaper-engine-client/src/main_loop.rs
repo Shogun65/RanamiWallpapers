@@ -32,7 +32,7 @@ pub fn main_loop(
         }
 
         {
-            let mut state = namepipecommands.lock();
+            let state = namepipecommands.lock();
 
             if let Ok(mut state) = state{
                 if state.wallpaper_changed{
@@ -79,4 +79,8 @@ pub fn main_loop(
         thread::sleep(Duration::from_millis(10));
     }
     return Ok(());
+}
+
+fn get_engine_hwnd() -> usize{
+    return ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed);
 }
