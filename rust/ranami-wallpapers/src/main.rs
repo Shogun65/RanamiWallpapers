@@ -51,7 +51,7 @@ fn main()
 
     let init_window_data = init_window();
 
-    let _window_handle = init_window_data.handle;
+    let _ = init_window_data.handle;
 
     let client_hwnd = init_window_data.main_hwnd; // iknow main hwnd and client hand geting mess but they both same thing hehe
 
@@ -73,13 +73,17 @@ fn main()
         None => return,
     };
 
-    run_namepipe_server(
+    let _ = run_namepipe_server(
         namepipecommands.clone(),
         &runtime_data.handle,
     );
 
-println!("running the main loop");
-let _ = main_loop::main_loop(namepipecommands.clone(), client_hwnd);
+    println!("running the main loop");
+    let rt = main_loop::main_loop(namepipecommands.clone(), client_hwnd);
+
+    if let Err(err) = rt{
+        err_log(&format!("err on main loop: {}", err));
+    }
 
 }
 

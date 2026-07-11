@@ -20,7 +20,7 @@ pub fn main_loop(
     let mut ranami_crash = false;
     let mut current_child_tray: Option<Child> = None;
 
-    loop {
+    'outer: loop {
         
         let mut next_wallpaper: Option<String> = None;
 
@@ -51,10 +51,10 @@ pub fn main_loop(
                 if let Some(mut child) = current_child.take(){
 
                     let ck = child.kill();
-                    println!("child kill: {:#?}", ck);
+                    println!("core child kill: {:#?}", ck);
 
                     let cw = child.wait();
-                    println!("child wait: {:#?}", cw);
+                    println!("core child wait: {:#?}", cw);
                     kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray);
                 }
             
@@ -76,19 +76,26 @@ pub fn main_loop(
                     // NOTE: tray when click exit on tray it will exit him self but this code is kinda useles
                     // but it here because maybe if somehow "Ranami core" exit whit exit code 0 so we also kill him(tray)
                     kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray);
-                    break;
+                    break 'outer;
                 };
 
                 ranami_crash = true;
                 kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray);
-
-
-            
             }
         }
 
+        if let Some(tray_child) = current_child_tray.as_mut(){
+            if let Ok(Some(exit_status)) = tray_child.try_wait()  {
+                println!("tray exit status: {}", exit_status);
+                if exit_status.success(){
+                    current_child_tray.take();
+                    break 'outer;
+                }
+            }
+        }
         thread::sleep(Duration::from_millis(10));
     }
+    kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray);// just in case
     return Ok(());
 }
 
@@ -106,7 +113,6 @@ fn init_tray(
 )
 {
     
-    if get_engine_hwnd() == 0 {return;} // verry improtands checks
     if current_child_tray.is_some() {return;}//
     println!("Engine HWND: {} (init_tray)", get_engine_hwnd());
     
