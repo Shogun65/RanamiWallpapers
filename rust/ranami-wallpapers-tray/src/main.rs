@@ -16,7 +16,7 @@ use std::env;
 // Check Window.h Window class Private area!
 //
 
-use shared::message::{WM_ENGINE_EXIT, WM_ENGINE_TEST};
+use shared::message::*;
 
 fn main() {
     
@@ -30,27 +30,30 @@ fn main() {
 
     let exit_menu = MenuItem::new("Exit Ranami", true, None);
 
+    let open_gui = MenuItem::new("Change Wallpaper", true, None);
+
     tray_menu.append(&test_menu).unwrap(); // it not going to give Error belive me
     tray_menu.append(&exit_menu).unwrap();
+    tray_menu.append(&open_gui).unwrap();
 
     let _tray_icon = TrayIconBuilder::new()
 
     .with_menu(Box::new(tray_menu))
 
-    .with_tooltip("Testing")
-
+    .with_tooltip("Ranami Wallpapers")
+    
     .build()
 
     .unwrap();
 
-    //let tray_channel = TrayIconEvent::receiver();
+    //let tray_channel = TrayIconEvent::receiver(); not usefull
 
     let menu_channel = MenuEvent::receiver();
 
 
     event_loop.run(move|_event, _window_target, control_flow|
     {
-        *control_flow = ControlFlow::Wait; // verry impotand to use wait!
+        *control_flow = ControlFlow::Wait; // verry impotand to use "wait"!
  
         if let Ok(event) = menu_channel.try_recv()
         {
@@ -65,6 +68,11 @@ fn main() {
                 unsafe {
                     PostQuitMessage(0);
                 }
+            }
+
+            if event.id == open_gui.id()
+            {
+                prototye_v1(WM_ENGINE_OPEN_GUI, client_data.client_hwnd);
             }
 
         } 
