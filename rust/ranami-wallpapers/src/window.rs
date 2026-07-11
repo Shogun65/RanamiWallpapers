@@ -1,8 +1,16 @@
+use std::os::raw::c_void;
+
+use ::windows::Win32::{Foundation::HWND, UI::WindowsAndMessaging::PostMessageW};
+
+use crate::{client_init::log_err::err_log, window::windows::ENGINE_HWND};
+
 pub(crate) mod windows{
     use std::{os::raw::c_void, thread::{self, JoinHandle}};
     use windows::Win32::Foundation::*; // idc man i want to code not to do this all day
     use windows::Win32::UI::WindowsAndMessaging::*;
     use windows::core::w;
+    use crate::{init_gui::init_gui::run_gui, window::postmessage};
+
     use super::super::client_init::log_err::err_log;
     use std::sync::mpsc::{channel, Sender};
     use shared::message::*; // take all message
@@ -91,6 +99,19 @@ pub(crate) mod windows{
                     return LRESULT(0);
                 }
 
+                WM_ENGINE_EXIT =>{
+                    postmessage(WM_ENGINE_EXIT);
+                    PostQuitMessage(0);
+                    return LRESULT(0);
+                }
+
+                WM_ENGINE_OPEN_GUI =>{
+
+                    let _ = run_gui();
+
+                    return LRESULT(0);
+                }
+
                 _ => return DefWindowProcW(hwnd, msg, wparam, lparam),
             }
             
@@ -127,4 +148,24 @@ pub(crate) mod windows{
         }
     }
 
+}
+
+fn postmessage(message: u32){
+    unsafe {
+        let hwnd = ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed);
+
+        if hwnd == 0 {return;}
+
+        let hwnd = HWND(hwnd as *mut c_void);
+
+        let rt = PostMessageW(
+            Some(hwnd),
+            message,
+            Default::default(),
+            Default::default()
+        );
+        if let Err(err) = rt{
+            err_log(&format!("Err on postmessage on windows.rs: {}", err));
+        }
+    }
 }

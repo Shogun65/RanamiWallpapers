@@ -6,7 +6,6 @@ mod window;
 mod arg;
 mod init_tray;
 mod init_gui;
-mod client_loop;
 mod namepipe;
 mod main_loop;
 
@@ -19,11 +18,8 @@ use shared::namepipe::{NamePipeCommands};
 use std::sync::{Arc, Mutex};
 use crate::namepipe::init_namepipe::run_namepipe_server;
 
-use tokio::runtime::{self, Handle, Runtime};
+use tokio::runtime::{Handle, Runtime};
 
-// use client_loop::init_loop::sleep_300_micros;
-// use engine::init_engine::run_wallpaper_engine;
-// use namepipe::init_namepipe::run_namepipe_server;
 
 
 fn main() 
@@ -71,25 +67,6 @@ fn main()
             return;
         },
     };
-
-    // let _ = run_wallpaper_engine("C:\\Users\\gmy87\\Downloads\\furina-masquerade.mp4",
-    //  "3", client_hwnd);
-
-    // sleep_300_micros();
-
-    // if ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed) != 0{
-    //     println!("ENGINE_HWND: {}", ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed));
-    //     current_engine_hwnd = ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed);
-    //     println!("current_engine_hwnd: {}", current_engine_hwnd);
-    // }
-    // else{
-    //     println!("current_engine_hwnd: {}", current_engine_hwnd);
-    //     println!("ENGINE_HWND: {}", ENGINE_HWND.load(std::sync::atomic::Ordering::Relaxed));
-    // }
-
-    // let _ = _window_handle.join();
-
-    // let _ = init_loop::run(client_hwnd, namepipecommands);
 
     let runtime_data = match RuntimeAndHandle::new() {
         Some(rt) => rt,

@@ -4,7 +4,7 @@ pub mod init_gui{
 
     pub fn run_gui() -> Result<Child, std::io::Error>
     {
-        let gui_exe = Command::new("wallpaper-engine-gui.exe").spawn()?;
+        let gui_exe = Command::new("ranami-wallpapers-gui.exe").spawn()?;
         return Ok(gui_exe);
     }
 }
