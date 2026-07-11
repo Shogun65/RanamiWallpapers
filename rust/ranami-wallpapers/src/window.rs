@@ -5,7 +5,7 @@ use ::windows::Win32::{Foundation::HWND, UI::WindowsAndMessaging::PostMessageW};
 use crate::{client_init::log_err::err_log, window::windows::ENGINE_HWND};
 
 pub(crate) mod windows{
-    use std::{os::raw::c_void, thread::{self, JoinHandle}};
+    use std::{os::raw::c_void, process::Child, thread::{self, JoinHandle}};
     use windows::Win32::Foundation::*; // idc man i want to code not to do this all day
     use windows::Win32::UI::WindowsAndMessaging::*;
     use windows::core::w;
@@ -16,7 +16,8 @@ pub(crate) mod windows{
     use shared::message::*; // take all message
     use std::sync::atomic::{AtomicUsize, Ordering};
 
-    pub static ENGINE_HWND : AtomicUsize = AtomicUsize::new(0); 
+    pub static ENGINE_HWND : AtomicUsize = AtomicUsize::new(0);
+    static mut GUI_CHILD: Option<Child> = None; // trust me man
 
     fn run_main_window(tx: Sender<usize>) -> JoinHandle<()>
     {
@@ -101,14 +102,58 @@ pub(crate) mod windows{
 
                 WM_ENGINE_EXIT =>{
                     postmessage(WM_ENGINE_EXIT);
+                    let gui = &raw mut GUI_CHILD;
+                    if let Some(mut child) = (*gui).take(){
+                        let _ = child.kill();
+                    }
                     PostQuitMessage(0);
                     return LRESULT(0);
                 }
 
                 WM_ENGINE_OPEN_GUI =>{
 
-                    let _ = run_gui();
+                    let gui = &raw mut GUI_CHILD;
+                    
+                    if let Some(mut child) = (*gui).take(){
 
+                        if let Ok(exit_status) =  child.try_wait(){
+
+                            match exit_status {
+
+                                Some(exit_status) =>{
+                                    
+                                    let rt = run_gui();
+                                    if let Ok(child) = rt{
+                                        (*gui) = Some(child);
+                                    }
+                                    else{
+                                        let rt = rt.unwrap_err();
+                                        err_log(&format!("err on GUI_CHILD: {},
+                                                                 old exit status: {}", rt, exit_status));
+                                    }
+                                    return LRESULT(0);
+                                },
+
+                                None => {
+                                    (*gui) = Some(child); // we just put that child back because he still
+                                    return LRESULT(0); // runing
+                                },
+                            }
+                        }
+                        else{
+                            (*gui) = Some(child);
+                            err_log("Error on try_wait on GUI_CHILD");
+                        }
+                    }
+                    else{
+                        let rt = run_gui();
+
+                        match rt {
+                            Ok(child) => (*gui) = Some(child),
+                            Err(err) => err_log(&format!("Error on lunching the run_gui: {}", err)),
+                        }
+
+                    }
                     return LRESULT(0);
                 }
 
