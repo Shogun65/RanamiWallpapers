@@ -74,7 +74,7 @@ pub mod save_path_and_settings{
     pub const STARTUP_FILE_SAVE_NAME: &str = "RanamiWallpapers-startup-file.txt";
 }
 
-pub mod erorr_code_core{
+pub mod error_code_core{
     #[repr(u32)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub enum EngineFailureCode {
@@ -90,6 +90,7 @@ pub mod erorr_code_core{
         StartupCodecOpenFailed = 17,
         StartupDxvaInitFailed = 18,
         StartupSwapChainFailed = 19,
+        VideoPathInvalid = 20,
         RuntimeUnknown = 30,
         
         RuntimeDecoderLoopFailed = 31,
