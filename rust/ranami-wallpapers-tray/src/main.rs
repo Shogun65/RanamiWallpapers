@@ -1,10 +1,14 @@
+#![windows_subsystem = "windows"]
+
+use image::GenericImageView;
+use shared::log_err::err_log;
 use windows::Win32::{Foundation::HWND, UI::WindowsAndMessaging::PostQuitMessage};
 use windows::Win32::UI::WindowsAndMessaging::PostMessageW;
 use std::ffi::c_void;
 
-use tray_icon::{TrayIconBuilder, menu::{Menu, MenuItem, MenuEvent}};
+use tray_icon::{TrayIconBuilder, menu::{Menu, MenuItem, MenuEvent}, Icon};
 use tao::event_loop::{ControlFlow, EventLoopBuilder};
-
+use std::path::Path;
 use std::env;
 
 // the 0x8001 is test code that print somethink on debug console of
@@ -145,4 +149,30 @@ impl ClientData {
     {
        return ClientData { client_hwnd, client_pid };
     }
+}
+
+fn load_icon(path: &Path) -> Option<Icon>{
+
+    let image = image::open(path);
+
+    let image = match image {
+        Ok(image) => image,
+        Err(err) => {
+            err_log(&format!("Error on tray load image: {}", err));
+            return None;
+        }
+    };
+
+    let (width, height) = image.dimensions();
+    let rgba = image.into_rgba8().into_raw();
+    let icon = Icon::from_rgba(rgba, width, height);
+
+    match icon {
+        Ok(icon) => return Some(icon),
+        Err(err) => {
+            err_log(&format!("Err on icon from_rgba(bad icon): {}", err));
+            return None;
+        }
+    }
+
 }

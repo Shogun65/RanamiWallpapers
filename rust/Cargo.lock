@@ -4376,6 +4376,7 @@ dependencies = [
 name = "ranami-wallpapers-tray"
 version = "0.1.0"
 dependencies = [
+ "image",
  "shared",
  "tao",
  "tray-icon",
