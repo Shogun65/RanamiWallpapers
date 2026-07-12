@@ -14,9 +14,10 @@ pub(crate) mod windows{
     use super::super::client_init::log_err::err_log;
     use std::sync::mpsc::{channel, Sender};
     use shared::message::*; // take all message
-    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::sync::atomic::{AtomicUsize, AtomicBool, Ordering};
 
     pub static ENGINE_HWND : AtomicUsize = AtomicUsize::new(0);
+    pub static ENGINE_HARD_CRASH: AtomicBool = AtomicBool::new(false);
     static mut GUI_CHILD: Option<Child> = None; // trust me man
 
     fn run_main_window(tx: Sender<usize>) -> JoinHandle<()>
@@ -155,6 +156,11 @@ pub(crate) mod windows{
 
                     }
                     return LRESULT(0);
+                }
+
+                WM_ENGINE_BOOTUP_FAILED => {
+                    ENGINE_HARD_CRASH.store(true, Ordering::Relaxed);
+                    return LRESULT(0); 
                 }
 
                 _ => return DefWindowProcW(hwnd, msg, wparam, lparam),
