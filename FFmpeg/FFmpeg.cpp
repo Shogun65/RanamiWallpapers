@@ -132,8 +132,8 @@ AVPixelFormat FFmpeg::get_pix_format
 			return *p;
 		}
 	}
-	printf("AV_PIX_FMT_YUV420P\n");
-	return AV_PIX_FMT_YUV420P;
+	printf("Cant find AV_PIX_FMT_D3D11\n");
+	std::exit(EXIT_FAILURE);
 }
 
 AVCodecContext* FFmpeg::GetCodecContext() const 
