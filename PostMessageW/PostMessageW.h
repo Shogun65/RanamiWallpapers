@@ -10,6 +10,9 @@ public:
                     WPARAM wparam, 
                     LPARAM lparam);
 
+    void sentmessage_err(HWND client_hwnd, 
+                    WPARAM wparam, 
+                    LPARAM lparam);
 
 private:
 
