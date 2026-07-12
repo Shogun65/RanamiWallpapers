@@ -73,7 +73,7 @@ public:
 	void InitFFmpeg(const char* fileparth,
 		ID3D11Device* Device, 
 		ID3D11DeviceContext* DeviceContext, 
-		int sizeofbuffer, size_t client_hwnd);
+		int sizeofbuffer);
 
 	static AVPixelFormat get_pix_format(
 		AVCodecContext* CodecCtx,

@@ -9,7 +9,7 @@
 */
 void FFmpeg::InitFFmpeg(const char* fileparth, 
 	ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, 
-	int sizeofbuffer, size_t client_hwnd)
+	int sizeofbuffer)
 {
 	_HWDevice = av_hwdevice_ctx_alloc(AV_HWDEVICE_TYPE_D3D11VA);
 
