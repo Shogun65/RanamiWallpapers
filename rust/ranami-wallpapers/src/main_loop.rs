@@ -12,7 +12,6 @@ pub fn main_loop(
     namepipecommands : Arc<Mutex<NamePipeCommands>>,
     client_hwnd : usize
 
-
 ) -> Result<(), std::io::Error>
 {
     let mut current_child: Option<Child> = None;
@@ -68,7 +67,13 @@ pub fn main_loop(
             
                 let child = run_wallpaper_engine(
                     &wallpaper_path, "3", client_hwnd)?;
-            
+                
+                let save_file_1_result = save_file_1(
+                                                std::path::PathBuf::from(&wallpaper_path));
+                
+                if let Err(err) = save_file_1_result{
+                    err_log(&format!("err on save_file_1 on main_loop: {}", err));
+                }
                 current_child = Some(child);
                 current_wallpaper = Some(wallpaper_path);
             }
