@@ -51,8 +51,7 @@ pub(crate) mod log_err
     use std::io::Write;
 
 
-    pub fn err_log(message: &str) // useing panic! here wont hurt because 
-    //                              it dont matter when we do err_log we already want our app to get exit
+    pub fn err_log(message: &str) 
     {
         let debug_file = OpenOptions::new()
                                                 .create(true)
@@ -62,14 +61,14 @@ pub(crate) mod log_err
         let result = match debug_file {
 
             Ok(mut debug) => writeln!(debug, "[ERROR] {}", message),
-            Err(_) => panic!("CantOpenDebugFile"),
+            Err(_) => return,
 
         };
 
         match result {
 
             Ok(_) => {},
-            Err(_) => panic!("CantWriteDebugError"),
+            Err(_) => {},
 
         };
 

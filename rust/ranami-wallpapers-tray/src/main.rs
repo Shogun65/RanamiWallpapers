@@ -1,15 +1,14 @@
 #![windows_subsystem = "windows"]
 
-use image::GenericImageView;
-use shared::log_err::err_log;
+use image::{DynamicImage};
 use windows::Win32::{Foundation::HWND, UI::WindowsAndMessaging::PostQuitMessage};
 use windows::Win32::UI::WindowsAndMessaging::PostMessageW;
 use std::ffi::c_void;
-
 use tray_icon::{TrayIconBuilder, menu::{Menu, MenuItem, MenuEvent}, Icon};
 use tao::event_loop::{ControlFlow, EventLoopBuilder};
-use std::path::Path;
 use std::env;
+use std::io::Cursor;
+use image::codecs::ico::IcoDecoder;
 
 // the 0x8001 is test code that print somethink on debug console of
 // wallpaper engine after that all numbers are usefull command
@@ -40,12 +39,14 @@ fn main() {
     tray_menu.append(&exit_menu).unwrap();
     tray_menu.append(&open_gui).unwrap();
 
+    let icon = load_embedded_icon();
+
     let _tray_icon = TrayIconBuilder::new()
 
     .with_menu(Box::new(tray_menu))
 
     .with_tooltip("Ranami Wallpapers")
-    
+    .with_icon(icon.unwrap_or(Icon::from_handle(1)))// i have no idea what iam doing
     .build()
 
     .unwrap();
@@ -151,28 +152,28 @@ impl ClientData {
     }
 }
 
-fn load_icon(path: &Path) -> Option<Icon>{
 
-    let image = image::open(path);
+// this fn writed by gemini
+fn load_embedded_icon() -> Option<Icon> {
+    // 1. Bake the .ico bytes into the executable
+    let ico_bytes = include_bytes!("../../assets/RanamiIcon.ico");
+    let reader = Cursor::new(ico_bytes);
+    
+    // 2. Parse the ICO file using the decoder
+    let decoder = IcoDecoder::new(reader).ok()?;
+    
+    // 3. Convert it into a standard DynamicImage
+    let img = DynamicImage::from_decoder(decoder).ok()?;
+    
+    // 4. Force resize it to 32x32 so it looks perfect in the Windows tray
+    //    (Using Lanczos3 filtering so it doesn't look pixelated/blurry)
+    let resized_img = img.resize_exact(32, 32, image::imageops::FilterType::Lanczos3);
+    
+    // 5. Convert to raw RGBA8 pixels
+    let rgba_buffer = resized_img.into_rgba8();
+    let (width, height) = rgba_buffer.dimensions();
+    let rgba_bytes = rgba_buffer.into_raw();
 
-    let image = match image {
-        Ok(image) => image,
-        Err(err) => {
-            err_log(&format!("Error on tray load image: {}", err));
-            return None;
-        }
-    };
-
-    let (width, height) = image.dimensions();
-    let rgba = image.into_rgba8().into_raw();
-    let icon = Icon::from_rgba(rgba, width, height);
-
-    match icon {
-        Ok(icon) => return Some(icon),
-        Err(err) => {
-            err_log(&format!("Err on icon from_rgba(bad icon): {}", err));
-            return None;
-        }
-    }
-
+    // 6. Pass the raw bytes safely to tray-icon
+    Icon::from_rgba(rgba_bytes, width, height).ok()
 }
