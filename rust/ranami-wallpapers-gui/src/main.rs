@@ -1,3 +1,4 @@
+#![windows_subsystem = "windows"]
 slint::include_modules!();
 
 mod file_saver;

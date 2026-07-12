@@ -14,6 +14,7 @@ pub mod message {
     pub const WM_ENGINE_BOOTUP_FAILED: u32 = WM_APP + 4;
     pub const WM_ENGINE_SENT_HWND: u32 = WM_APP +5;
     pub const WM_ENGINE_OPEN_GUI: u32 = WM_APP + 6;
+    pub const WM_ENGINE_D3D11_FMT_NOT_FOUND: u32 = WM_APP + 7;
 }
 
 pub mod log_err {
