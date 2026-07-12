@@ -62,3 +62,13 @@ pub mod namepipe{
 
     pub const PIPE_NAME: &str = r"\\.\pipe\RanamiWallpapers";
 }
+
+pub mod save_path_and_settings{
+    pub const SAVE_WALLPAPERS_PATH: &str = "Save-Wallpapers.json";
+    pub const THUMBNAIL_CACHE_DIR: &str = "cache-wallpaper-thumbnails";
+    pub const THUMBNAIL_EXTENSION: &str = "jpg";
+    pub const THUMBNAIL_WIDTH: &str = "640";
+    pub const THUMBNAIL_HEIGHT: &str = "360";
+    pub const THUMBNAIL_TIMESTAMP: &str = "00:00:01";
+    pub const STARTUP_FILE_SAVE_NAME: &str = "RanamiWallpapers-startup-file.txt";
+}

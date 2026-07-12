@@ -4,12 +4,7 @@ pub(crate) mod thumbnail_cache {
     use std::fs;
     use std::path::{Path, PathBuf};
     use std::process::{Command, Stdio};
-
-    const THUMBNAIL_CACHE_DIR: &str = "cache-wallpaper-thumbnails";
-    const THUMBNAIL_EXTENSION: &str = "jpg";
-    const THUMBNAIL_WIDTH: &str = "640";
-    const THUMBNAIL_HEIGHT: &str = "360";
-    const THUMBNAIL_TIMESTAMP: &str = "00:00:01";
+    use shared::save_path_and_settings::*;
 
     pub fn load_or_create_thumbnail_path(video_path: &str) -> Result<PathBuf, String> {
         // Each card asks for its preview through this single entry point:

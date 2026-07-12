@@ -8,6 +8,7 @@ mod init_tray;
 mod init_gui;
 mod namepipe;
 mod main_loop;
+mod startup_file_check;
 
 use client_init::client_init::client_init;
 use client_init::error::ErrorClient;
@@ -78,6 +79,8 @@ fn main()
         &runtime_data.handle,
     );
 
+
+
     println!("running the main loop");
     let rt = main_loop::main_loop(namepipecommands.clone(), client_hwnd);
 
@@ -111,3 +114,4 @@ impl RuntimeAndHandle {
         return None;
     }
 }
+

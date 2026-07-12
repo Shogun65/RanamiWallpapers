@@ -5,9 +5,10 @@ pub(crate) mod file_saver {
     use std::fs::{self, OpenOptions};
     use std::io::{Read, Write};
     use std::path::{Path, PathBuf};
+    use shared::save_path_and_settings::*;
 
     // The GUI keeps its wallpaper library in one json file beside the executable / working dir.
-    const SAVE_WALLPAPERS_PATH: &str = "Save-Wallpapers.json";
+    
 
     #[allow(dead_code)]
     pub(crate) fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error> {
