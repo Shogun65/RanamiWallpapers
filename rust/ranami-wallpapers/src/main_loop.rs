@@ -18,6 +18,7 @@ pub fn main_loop(
     let mut current_wallpaper: Option<String> = None;
     let mut ranami_crash = false;
     let mut current_child_tray: Option<Child> = None;
+    let mut ranami_crash_count = 0;
 
     if let Some(wallpaper_path) = read_file_1(){
        if !wallpaper_path.is_empty(){
@@ -30,6 +31,17 @@ pub fn main_loop(
     }
 
     'outer: loop {
+
+        if ranami_crash_count > 5{
+            set_engine_hwnd_to_0();
+            if let Some(mut ranami_core) = current_child.take(){
+                let _ = ranami_core.kill();
+            }
+            if let Some(mut tray_child) = current_child_tray.take(){
+                let _ = tray_child.kill();
+            }
+            break 'outer;
+        }
         
         let mut next_wallpaper: Option<String> = None;
 
@@ -95,6 +107,7 @@ pub fn main_loop(
                 };
 
                 ranami_crash = true;
+                ranami_crash_count +=1;
                 kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray);
             }
         }
