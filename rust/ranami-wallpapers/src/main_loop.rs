@@ -1,11 +1,11 @@
 
-
 use std::{sync::{Arc, Mutex}, thread, time::Duration};
 use shared::namepipe::NamePipeCommands;
 use crate::{client_init::log_err::err_log, window::windows::ENGINE_HWND};
 use std::process::Child;
 use crate::engine::init_engine::run_wallpaper_engine;
 use crate::init_tray::run_tray;
+use crate::startup_file_check::{read_file_1, save_file_1};
 
 pub fn main_loop(
 
@@ -19,6 +19,14 @@ pub fn main_loop(
     let mut current_wallpaper: Option<String> = None;
     let mut ranami_crash = false;
     let mut current_child_tray: Option<Child> = None;
+
+    if let Some(wallpaper_path) = read_file_1(){
+        let child = run_wallpaper_engine(
+                &wallpaper_path, "3", client_hwnd)?;
+            
+        current_child = Some(child);
+        current_wallpaper = Some(wallpaper_path);  
+    }
 
     'outer: loop {
         
