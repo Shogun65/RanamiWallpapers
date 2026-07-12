@@ -20,11 +20,13 @@ pub fn main_loop(
     let mut current_child_tray: Option<Child> = None;
 
     if let Some(wallpaper_path) = read_file_1(){
+       if !wallpaper_path.is_empty(){
         let child = run_wallpaper_engine(
                 &wallpaper_path, "3", client_hwnd)?;
             
         current_child = Some(child);
-        current_wallpaper = Some(wallpaper_path);  
+        current_wallpaper = Some(wallpaper_path); 
+       }
     }
 
     'outer: loop {

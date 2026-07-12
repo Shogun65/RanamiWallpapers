@@ -8,6 +8,7 @@ pub fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error> {
     let mut path_file = OpenOptions::new()
         .write(true)
         .create(true)
+        .truncate(true)
         .open(STARTUP_FILE_SAVE_NAME)?;
 
     write!(
