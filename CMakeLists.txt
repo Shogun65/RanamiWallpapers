@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 project(RanamiWallpapers)
 
@@ -20,6 +20,9 @@ add_executable(RanamiWallpapers WIN32
     Parse/Parse.cpp
     PostMessageW/PostMessageW.cpp
 )
+
+set_property(TARGET RanamiWallpapers PROPERTY
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # Include directories
 target_include_directories(RanamiWallpapers PRIVATE
@@ -51,9 +54,6 @@ target_compile_definitions(RanamiWallpapers PRIVATE
     UNICODE
     _UNICODE
 )
-
-# Use static runtime (VERY important)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 
 # Force release mode optimizations
 set(CMAKE_BUILD_TYPE Release)
