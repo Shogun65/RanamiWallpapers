@@ -18,7 +18,7 @@ pub mod namepipe{
                 Ok(_) => return,
 
                 Err(err) => {
-                    err_log(&format!("error on sent_data_to_client: {:#?}", err.raw_os_error()));
+                    err_log(&format!("error on sent_data_to_client: {}", err));
                     return;
                 }
             }
