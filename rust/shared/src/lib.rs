@@ -73,3 +73,28 @@ pub mod save_path_and_settings{
     pub const THUMBNAIL_TIMESTAMP: &str = "00:00:01";
     pub const STARTUP_FILE_SAVE_NAME: &str = "RanamiWallpapers-startup-file.txt";
 }
+
+pub mod erorr_code_core{
+    #[repr(u32)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    pub enum EngineFailureCode {
+        None = 0,
+        
+        StartupUnknown = 10,
+        StartupParseArgsFailed = 11,
+        StartupOpenInputFailed = 12,
+        StartupStreamInfoFailed = 13,
+        StartupD3D11FormatMissing = 14,
+        StartupHwDeviceInitFailed = 15,
+        StartupHwFramesInitFailed = 16,
+        StartupCodecOpenFailed = 17,
+        StartupDxvaInitFailed = 18,
+        StartupSwapChainFailed = 19,
+        RuntimeUnknown = 30,
+        
+        RuntimeDecoderLoopFailed = 31,
+        RuntimeVideoProcessorFailed = 32,
+        RuntimePresentFailed = 33,
+        RuntimeDeviceLost = 34,
+    }
+}
