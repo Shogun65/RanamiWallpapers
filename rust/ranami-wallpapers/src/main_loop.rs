@@ -5,7 +5,8 @@ use crate::{
     client_init::log_err::err_log,
     window::windows::{ENGINE_HARD_CRASH, ENGINE_HWND},
 };
-use shared::namepipe::NamePipeCommands;
+use shared::{namepipe::NamePipeCommands, message::WM_ENGINE_OPEN_GUI, 
+    usefull_fn::request_client_post};
 use std::process::Child;
 use std::{
     sync::{Arc, Mutex},
@@ -25,10 +26,23 @@ pub fn main_loop(
 
     if let Some(wallpaper_path) = read_file_1() {
         if !wallpaper_path.is_empty() {
-            let child = run_wallpaper_engine(&wallpaper_path, "3", client_hwnd)?;
 
-            current_child = Some(child);
-            current_wallpaper = Some(wallpaper_path);
+            let wallpaper_path = std::path::PathBuf::from(wallpaper_path);
+
+            if wallpaper_path.exists(){
+                let child = run_wallpaper_engine(
+                wallpaper_path.to_str().unwrap_or(""),
+                 "3", client_hwnd)?;
+
+                current_child = Some(child);
+                current_wallpaper = Some(wallpaper_path.to_string_lossy().to_string());
+            }
+            else{
+                request_client_post(client_hwnd, WM_ENGINE_OPEN_GUI);
+            } 
+        }
+        else {
+            request_client_post(client_hwnd, WM_ENGINE_OPEN_GUI);
         }
     }
 
