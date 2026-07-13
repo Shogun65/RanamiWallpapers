@@ -1,80 +1,85 @@
 # How to Use Engine Messages
 
-## What are Engine Messages?
+Engine messages are custom Windows messages used for HWND-to-HWND communication between the native engine side and the Rust-managed side.
 
-Engine Messages are custom Windows messages used for communication between the following components:
+## Who uses them
 
-* Core Engine
-* Client
-* Tray Application
+The messages are mainly passed between:
 
-The Core Engine is intentionally simple. It only needs:
+- the native C++ engine window
+- the hidden Rust client window
+- the tray process
 
-* Video path
-* Buffer count (defaults to 3 if not provided)
+The GUI is different:
 
-The engine does not know or care about the rest of the application. Because of this, we use Engine Messages to send commands such as exiting the engine or performing other engine-related actions.
+- the GUI does not select wallpapers through engine messages
+- it sends wallpaper paths to the Rust client through the named pipe instead
 
----
+## Why messages exist
 
-## How It Works
+The engine core is kept fairly focused on wallpaper playback and rendering.
 
-A component sends a custom Windows message to the engine window using `PostMessageW()`.
+Because of that, higher-level process control is handled outside the engine and sent in through custom messages, for example:
 
-Example:
+- exit requests
+- startup result messages
+- "open GUI" style commands
+- engine HWND handoff
+
+## Basic example
+
+A component can post a custom message like this:
 
 ```cpp
 PostMessageW(hwnd, _WM_ENGINE_EXIT, 0, 0);
 ```
 
-The engine receives the message inside `WindowProc()`.
+The receiver handles it inside its window procedure or message loop.
 
-See:
+## Current message source of truth
 
-* `Window/Window.cpp`
-* `engine_message_list.md`
+The current shared message IDs live in:
 
----
+- `rust/shared/src/lib.rs`
 
-## Handling Messages
+For the current list, see:
 
-Messages are processed inside a `switch` statement in `WindowProc()`.
+- [engine_message_list.md](engine_message_list.md)
 
-Example:
-
-```cpp
-case _WM_ENGINE_EXIT:
-{
-    PostQuitMessage(0);
-    return 0;
-}
-```
-
-`_WM_ENGINE_EXIT` currently has the value `0x8002` (`WM_APP + 2`).
-
-See:
-
-* `Window/Window.h`
-* `engine_message_list.md`
-
----
-
-## Message Flow
+## Message flow
 
 ```text
-Tray
+Tray process
       |
-      | PostMessageW(...)
+      | custom Windows message
       v
-Client Window (Hidden HWND) <-- See Client Manage everythink (in future he also Manage GUI!)
+Hidden Rust client window
       |
-      |
-      v 
-Engine Window (HWND)
-      |
+      | custom Windows message
       v
-WindowProc()
+Native engine window
       |
       v
-Handle Custom Message
+WindowProc / message handler
 ```
+
+Separate path for wallpaper selection:
+
+```text
+GUI double-click
+      |
+      | named pipe json command
+      v
+Rust client
+      |
+      | spawn / restart core process
+      v
+Native engine process
+```
+
+## Important note for future changes
+
+If you are deciding between engine messages and the named pipe:
+
+- use engine messages for HWND/window-level commands
+- use the named pipe for higher-level data like "switch to this wallpaper path"
