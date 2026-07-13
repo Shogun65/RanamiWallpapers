@@ -1,10 +1,12 @@
 pub(crate) mod thumbnail_cache {
+    use shared::save_path_and_settings::*;
     use std::collections::HashSet;
     use std::env;
+    use std::ffi::OsStr;
     use std::fs;
+    use std::os::windows::process::CommandExt;
     use std::path::{Path, PathBuf};
     use std::process::{Command, Stdio};
-    use shared::save_path_and_settings::*;
 
     pub fn load_or_create_thumbnail_path(video_path: &str) -> Result<PathBuf, String> {
         // Each card asks for its preview through this single entry point:
@@ -104,8 +106,9 @@ pub(crate) mod thumbnail_cache {
     fn generate_thumbnail(video_path: &Path, thumbnail_path: &Path) -> Result<(), String> {
         let ffmpeg_command = ffmpeg_command_path();
 
-        // Grab one frame around 1 second in and crop it to a card-friendly preview size.
-        let status = Command::new(&ffmpeg_command)
+        // ffmpeg.exe is a console application, so spawn it with CREATE_NO_WINDOW to stop
+        // Windows from flashing a temporary CMD window while thumbnails are being built.
+        let status = hidden_tool_command(&ffmpeg_command)
             .arg("-y")
             .arg("-ss")
             .arg(THUMBNAIL_TIMESTAMP)
@@ -146,6 +149,12 @@ pub(crate) mod thumbnail_cache {
         }
 
         Ok(())
+    }
+
+    pub fn hidden_tool_command(program: impl AsRef<OsStr>) -> Command {
+        let mut command = Command::new(program);
+        command.creation_flags(CREATE_NO_WINDOW);
+        command
     }
 
     fn needs_regeneration(video_path: &Path, thumbnail_path: &Path) -> Result<bool, String> {

@@ -1,14 +1,13 @@
 pub(crate) mod file_saver {
     use rfd::FileHandle;
+    use shared::save_path_and_settings::*;
     use shared::save_wallpaper::SaveWallpaper;
     use std::ffi::OsStr;
     use std::fs::{self, OpenOptions};
     use std::io::{Read, Write};
     use std::path::{Path, PathBuf};
-    use shared::save_path_and_settings::*;
 
     // The GUI keeps its wallpaper library in one json file beside the executable / working dir.
-    
 
     #[allow(dead_code)]
     pub(crate) fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error> {
@@ -94,9 +93,7 @@ pub(crate) mod file_saver {
             .find(|wallpaper| wallpaper.path == save_wallpaper.path)
         {
             existing_wallpaper.name = save_wallpaper.name;
-        } 
-        
-        else {
+        } else {
             vec_wallpaper.push(save_wallpaper);
         }
 

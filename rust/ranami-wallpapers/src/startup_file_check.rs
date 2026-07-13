@@ -1,10 +1,9 @@
-use std::fs::{OpenOptions};
+use shared::save_path_and_settings::STARTUP_FILE_SAVE_NAME;
+use std::fs::OpenOptions;
 use std::io::{Read, Write};
 use std::path::PathBuf;
-use shared::save_path_and_settings::STARTUP_FILE_SAVE_NAME;
 
 pub fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error> {
-    
     let mut path_file = OpenOptions::new()
         .write(true)
         .create(true)
@@ -21,7 +20,6 @@ pub fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error> {
 }
 
 pub fn read_file_1() -> Option<String> {
-
     let mut video_path_file = OpenOptions::new()
         .read(true)
         .write(true)

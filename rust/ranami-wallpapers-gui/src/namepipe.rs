@@ -1,20 +1,17 @@
-pub mod namepipe{
+pub mod namepipe {
 
+    use serde_json;
+    use shared::log_err::err_log;
+    use shared::namepipe::{NamePipeCommands, PIPE_NAME};
     use tokio::io::AsyncWriteExt;
     use tokio::net::windows::named_pipe::ClientOptions;
-    use shared::namepipe::{NamePipeCommands, PIPE_NAME};
-    use shared::log_err::err_log;
-    use serde_json;
     use tokio::runtime::{Handle, Runtime};
 
-    pub fn sent_struct_of_data_to_client(video_path: String, handle : &Handle)
-    {
+    pub fn sent_struct_of_data_to_client(video_path: String, handle: &Handle) {
         handle.spawn(async move {
-
             let result = sent_data_to_client(video_path).await;
 
             match result {
-
                 Ok(_) => return,
 
                 Err(err) => {
@@ -25,11 +22,10 @@ pub mod namepipe{
         });
     }
 
-    pub fn get_runtime() -> Option<Runtime>{
-
+    pub fn get_runtime() -> Option<Runtime> {
         let runtime = Runtime::new();
 
-        if let Err(err) = runtime{
+        if let Err(err) = runtime {
             err_log(&format!("error on Runtime::new(): {}", err));
             return None;
         }; // idk what iam doing i feel stupid
@@ -37,12 +33,9 @@ pub mod namepipe{
         return Some(runtime.unwrap());
     }
 
-    async fn sent_data_to_client(video_path: String) -> std::io::Result<()>
-    {
-
+    async fn sent_data_to_client(video_path: String) -> std::io::Result<()> {
         println!("PIPE_NAME(client): {}", PIPE_NAME);
-        let mut namepipe = ClientOptions::new()
-                                        .open(PIPE_NAME)?;
+        let mut namepipe = ClientOptions::new().open(PIPE_NAME)?;
 
         let video_path = get_json_of_struct(video_path)?;
 
@@ -51,11 +44,10 @@ pub mod namepipe{
         return Ok(());
     }
 
-    fn get_json_of_struct(video_path: String) -> Result<String, std::io::Error>{
-
-        let namepipe = NamePipeCommands{
-            video_path : video_path, 
-            wallpaper_changed : true
+    fn get_json_of_struct(video_path: String) -> Result<String, std::io::Error> {
+        let namepipe = NamePipeCommands {
+            video_path: video_path,
+            wallpaper_changed: true,
         };
 
         println!("[DEBUG] namepipe: {:#?}", namepipe);
@@ -66,5 +58,4 @@ pub mod namepipe{
 
         return Ok(json);
     }
-
 }

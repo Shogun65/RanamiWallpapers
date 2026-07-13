@@ -3,13 +3,12 @@ slint::include_modules!();
 
 mod file_saver;
 mod init_file_picker;
-mod thumbnail_cache;
 mod namepipe;
+mod thumbnail_cache;
 
 use std::{
     fs,
     path::Path,
-    process::Command,
     sync::{
         Arc,
         atomic::{AtomicU64, Ordering},
@@ -19,27 +18,26 @@ use std::{
 
 use file_saver::file_saver::{read_existing_saved_wallpapers, save_file_2};
 use init_file_picker::init::init_a_file_picker;
+use namepipe::namepipe::{get_runtime, sent_struct_of_data_to_client};
 use shared::log_err::err_log;
 use shared::save_wallpaper::SaveWallpaper;
-use namepipe::namepipe::{get_runtime, sent_struct_of_data_to_client};
 
 use slint::{
     ComponentHandle, Image, Model, ModelRc, Rgba8Pixel, SharedPixelBuffer, SharedString, VecModel,
 };
 use thumbnail_cache::thumbnail_cache::{
-    cleanup_stale_thumbnails, ffmpeg_command_path, ffprobe_command_path,
+    cleanup_stale_thumbnails, ffmpeg_command_path, ffprobe_command_path, hidden_tool_command,
     load_or_create_thumbnail_path,
 };
 
 fn main() -> Result<(), slint::PlatformError> {
-    
     let ui = AppWindow::new()?;
 
-    /* 
+    /*
         lets get the runtime here and his handle
     */
 
-    let runtime = get_runtime().unwrap();// get panic for now maybe for forever who knows
+    let runtime = get_runtime().unwrap(); // get panic for now maybe for forever who knows
     let handle = runtime.handle().clone();
 
     let refresh_generation = Arc::new(AtomicU64::new(0));
@@ -266,7 +264,9 @@ fn wallpaper_resolution(path: &str) -> Option<String> {
 }
 
 fn resolution_from_ffprobe(path: &str) -> Option<String> {
-    let ffprobe_output = Command::new(ffprobe_command_path())
+    // Metadata queries run in the background thread, but ffprobe.exe is still a console binary.
+    // Reuse the hidden-process helper so library refreshes stay visually quiet.
+    let ffprobe_output = hidden_tool_command(ffprobe_command_path())
         .arg("-v")
         .arg("error")
         .arg("-select_streams")
@@ -288,7 +288,7 @@ fn resolution_from_ffprobe(path: &str) -> Option<String> {
 }
 
 fn resolution_from_ffmpeg(path: &str) -> Option<String> {
-    let ffmpeg_output = Command::new(ffmpeg_command_path())
+    let ffmpeg_output = hidden_tool_command(ffmpeg_command_path())
         .arg("-hide_banner")
         .arg("-i")
         .arg(path)

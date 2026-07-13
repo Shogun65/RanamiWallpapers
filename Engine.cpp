@@ -109,7 +109,7 @@ void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchin(HINSTANCE hInstance)
 
 void Engine::MakeWindowRunwhitWorkerWandRunDXandswapchinWhitFFmpeg(HINSTANCE hInstance)
 {
-	_window.InitDebugConsole();
+	//_window.InitDebugConsole();
 
 	auto args_data = _parse.get_data();
 	_framequeue.init(args_data.buffer_count);
