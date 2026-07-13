@@ -99,3 +99,41 @@ pub mod error_code_core {
         RuntimeDeviceLost = 34,
     }
 }
+
+pub mod usefull_fn{
+
+    use std::os::raw::c_void;
+
+    use windows::Win32::{Foundation::{HWND}, 
+    UI::WindowsAndMessaging::{PostMessageW, SendMessageW}};
+
+    use super::log_err::err_log;
+
+    pub fn request_client_post(client_hwnd: usize, message: u32)
+    {
+        let client_hwnd = HWND(client_hwnd as *mut c_void);
+
+        unsafe {
+            let rt = PostMessageW(Some(client_hwnd),
+            message,
+            Default::default(),
+            Default::default());
+
+            if let Err(err) = rt{
+                err_log(&format!("Err on request_client_post: {}", err));
+            };
+        }
+    }
+    #[allow(dead_code)]
+    pub fn request_client_sent(client_hwnd: usize, message: u32)
+    {
+        let client_hwnd = HWND(client_hwnd as *mut c_void);
+
+        unsafe {
+            let _ = SendMessageW(client_hwnd,
+            message,
+            Default::default(),
+            Default::default());
+        }
+    }
+}
