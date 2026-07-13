@@ -1,7 +1,7 @@
 
 use std::{sync::{Arc, Mutex}, thread, time::Duration};
 use shared::namepipe::NamePipeCommands;
-use crate::{client_init::log_err::err_log, window::windows::ENGINE_HWND};
+use crate::{client_init::log_err::err_log, window::windows::{ENGINE_HWND, ENGINE_HARD_CRASH}};
 use std::process::Child;
 use crate::engine::init_engine::run_wallpaper_engine;
 use crate::init_tray::run_tray;
@@ -32,7 +32,7 @@ pub fn main_loop(
 
     'outer: loop {
 
-        if ranami_crash_count > 5{
+        if ranami_crash_count > 5 || ENGINE_HARD_CRASH.load(std::sync::atomic::Ordering::Relaxed){
             set_engine_hwnd_to_0();
             if let Some(mut ranami_core) = current_child.take(){
                 let _ = ranami_core.kill();
