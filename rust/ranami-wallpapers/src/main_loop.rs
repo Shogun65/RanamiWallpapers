@@ -63,9 +63,14 @@ pub fn main_loop(
         init_tray(&mut current_child_tray, client_hwnd);
 
         if ranami_crash {
-            if let Some(reuse_wallpaper) = current_wallpaper.as_deref() {
-                next_wallpaper = Some(reuse_wallpaper.to_string());
-                current_wallpaper = None;
+            if let Some(reuse_wallpaper) = current_wallpaper.take() {
+                if !reuse_wallpaper.is_empty(){
+                    next_wallpaper = Some(reuse_wallpaper);
+                    //current_wallpaper = None; no need for this remember the take()
+                }
+                else{
+                    request_client_post(client_hwnd, WM_ENGINE_OPEN_GUI);
+                }
             }
             ranami_crash = false;
         }
