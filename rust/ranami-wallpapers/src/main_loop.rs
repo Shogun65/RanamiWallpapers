@@ -25,7 +25,7 @@ pub fn main_loop(
     let mut ranami_crash_count = 0;
 
     if let Some(wallpaper_path) = read_file_1() {
-        if !wallpaper_path.is_empty() {
+        if !wallpaper_path.trim().is_empty() {
 
             let wallpaper_path = std::path::PathBuf::from(wallpaper_path);
 
@@ -64,7 +64,7 @@ pub fn main_loop(
 
         if ranami_crash {
             if let Some(reuse_wallpaper) = current_wallpaper.take() {
-                if !reuse_wallpaper.is_empty(){
+                if !reuse_wallpaper.trim().is_empty(){
                     next_wallpaper = Some(reuse_wallpaper);
                     //current_wallpaper = None; no need for this remember the take()
                 }
@@ -99,7 +99,8 @@ pub fn main_loop(
 
                 let child = run_wallpaper_engine(&wallpaper_path, "3", client_hwnd)?;
 
-                let save_file_1_result = save_file_1(std::path::PathBuf::from(&wallpaper_path));
+                let save_file_1_result = save_file_1(
+                    std::path::PathBuf::from(&wallpaper_path));
 
                 if let Err(err) = save_file_1_result {
                     err_log(&format!("err on save_file_1 on main_loop: {}", err));
