@@ -2,11 +2,10 @@ use crate::engine::init_engine::run_wallpaper_engine;
 use crate::init_tray::run_tray;
 use crate::startup_file_check::{read_file_1, save_file_1};
 use crate::{
-    client_init::log_err::err_log,
     window::windows::{ENGINE_HARD_CRASH, ENGINE_HWND},
 };
 use shared::{namepipe::NamePipeCommands, message::WM_ENGINE_OPEN_GUI, 
-    usefull_fn::request_client_post};
+    usefull_fn::request_client_post, log_err::err_log};
 use std::process::Child;
 use std::{
     sync::{Arc, Mutex},

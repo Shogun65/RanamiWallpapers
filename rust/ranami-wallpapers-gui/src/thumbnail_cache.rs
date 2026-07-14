@@ -75,7 +75,7 @@ pub(crate) mod thumbnail_cache {
     }
 
     fn thumbnail_path_for_video(video_path: &Path) -> Result<PathBuf, String> {
-        // Keep generated previews in a local cache folder instead of polluting the repo root.
+        // Keep generated previews in LocalAppData instead of polluting the repo or exe folder.
         let cache_dir = thumbnail_cache_dir()?;
 
         // The cached file name uses both the video name and a hash of the full path,
@@ -89,18 +89,11 @@ pub(crate) mod thumbnail_cache {
     }
 
     fn thumbnail_cache_dir() -> Result<PathBuf, String> {
-        let cache_dir = env::current_dir()
-            .map_err(|err| format!("Could not read current directory: {err}"))?
-            .join(THUMBNAIL_CACHE_DIR);
-
-        fs::create_dir_all(&cache_dir).map_err(|err| {
+        thumbnail_cache_dir_path().map_err(|err| {
             format!(
-                "Could not create thumbnail cache directory {}: {err}",
-                cache_dir.display()
+                "Could not create thumbnail cache directory in LocalAppData: {err}"
             )
-        })?;
-
-        Ok(cache_dir)
+        })
     }
 
     fn generate_thumbnail(video_path: &Path, thumbnail_path: &Path) -> Result<(), String> {

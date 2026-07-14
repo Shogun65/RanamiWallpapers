@@ -21,11 +21,19 @@ pub mod log_err {
     use std::fs::OpenOptions;
     use std::io::Write;
 
+    use crate::save_path_and_settings::debug_log_file_path;
+
     pub fn err_log(message: &str) {
+        
+        let debug_log_path = match debug_log_file_path() {
+            Ok(debug_log_path) => debug_log_path,
+            Err(_) => return,
+        };
+
         let debug_file = OpenOptions::new()
             .create(true)
             .append(true)
-            .open("debug.txt");
+            .open(debug_log_path);
 
         let result = match debug_file {
             Ok(mut debug) => writeln!(debug, "[ERROR] {}", message),
@@ -64,6 +72,12 @@ pub mod namepipe {
 }
 
 pub mod save_path_and_settings {
+    use std::env;
+    use std::fs;
+    use std::io;
+    use std::path::PathBuf;
+
+    pub const APP_STORAGE_DIR_NAME: &str = "RanamiWallpapers";
     pub const SAVE_WALLPAPERS_PATH: &str = "Save-Wallpapers.json";
     pub const THUMBNAIL_CACHE_DIR: &str = "cache-wallpaper-thumbnails";
     pub const THUMBNAIL_EXTENSION: &str = "jpg";
@@ -71,7 +85,50 @@ pub mod save_path_and_settings {
     pub const THUMBNAIL_HEIGHT: &str = "360";
     pub const THUMBNAIL_TIMESTAMP: &str = "00:00:01";
     pub const STARTUP_FILE_SAVE_NAME: &str = "RanamiWallpapers-startup-file.txt";
+    pub const DEBUG_LOG_FILE_NAME: &str = "debug.txt";
     pub const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+    pub fn app_storage_dir() -> Result<PathBuf, io::Error> {
+        // Keep user data in LocalAppData so wallpapers and thumbnails are not tied to the repo folder.
+        let local_app_data = env::var_os("LOCALAPPDATA").ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::NotFound,
+                "LOCALAPPDATA environment variable is not set",
+            )
+        })?;
+
+        let storage_dir = PathBuf::from(local_app_data).join(APP_STORAGE_DIR_NAME);
+        fs::create_dir_all(&storage_dir)?;
+
+        Ok(storage_dir)
+    }
+
+    pub fn save_wallpapers_file_path() -> Result<PathBuf, io::Error> {
+        Ok(app_storage_dir()?.join(SAVE_WALLPAPERS_PATH))
+    }
+
+    pub fn thumbnail_cache_dir_path() -> Result<PathBuf, io::Error> {
+        let cache_dir = app_storage_dir()?.join(THUMBNAIL_CACHE_DIR);
+        fs::create_dir_all(&cache_dir)?;
+
+        Ok(cache_dir)
+    }
+
+    pub fn startup_file_path() -> Result<PathBuf, io::Error> {
+        Ok(app_storage_dir()?.join(STARTUP_FILE_SAVE_NAME))
+    }
+
+    pub fn debug_log_file_path() -> Result<PathBuf, io::Error> {
+        Ok(app_storage_dir()?.join(DEBUG_LOG_FILE_NAME))
+    }
+
+    pub fn legacy_save_wallpapers_file_path() -> Result<PathBuf, io::Error> {
+        Ok(env::current_dir()?.join(SAVE_WALLPAPERS_PATH))
+    }
+
+    pub fn legacy_startup_file_path() -> Result<PathBuf, io::Error> {
+        Ok(env::current_dir()?.join(STARTUP_FILE_SAVE_NAME))
+    }
 }
 
 pub mod error_code_core {

@@ -39,27 +39,33 @@ mod files {
     ];
 }
 
-pub(crate) mod log_err {
-    use std::fs::OpenOptions;
-    use std::io::Write;
+// pub(crate) mod log_err {
+//     use shared::save_path_and_settings::debug_log_file_path;
+//     use std::fs::OpenOptions;
+//     use std::io::Write;
 
-    pub fn err_log(message: &str) {
-        let debug_file = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open("debug.txt");
+//     pub fn err_log(message: &str) {
+//         let debug_log_path = match debug_log_file_path() {
+//             Ok(debug_log_path) => debug_log_path,
+//             Err(_) => return,
+//         };
 
-        let result = match debug_file {
-            Ok(mut debug) => writeln!(debug, "[ERROR] {}", message),
-            Err(_) => return,
-        };
+//         let debug_file = OpenOptions::new()
+//             .create(true)
+//             .append(true)
+//             .open(debug_log_path);
 
-        match result {
-            Ok(_) => {}
-            Err(_) => {}
-        };
-    }
-}
+//         let result = match debug_file {
+//             Ok(mut debug) => writeln!(debug, "[ERROR] {}", message),
+//             Err(_) => return,
+//         };
+
+//         match result {
+//             Ok(_) => {}
+//             Err(_) => {}
+//         };
+//     }
+// }
 
 pub mod error {
     // pub(super) enum ErrorLog

@@ -14,7 +14,7 @@ use crate::namepipe::init_namepipe::run_namepipe_server;
 use arg::{error, init};
 use client_init::client_init::client_init;
 use client_init::error::ErrorClient;
-use client_init::log_err::err_log;
+use shared::log_err::err_log;
 use shared::namepipe::NamePipeCommands;
 use std::sync::{Arc, Mutex};
 use window::windows::init_window;

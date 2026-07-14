@@ -7,7 +7,7 @@ pub(crate) mod file_saver {
     use std::io::{Read, Write};
     use std::path::{Path, PathBuf};
 
-    // The GUI keeps its wallpaper library in one json file beside the executable / working dir.
+    // The GUI keeps its wallpaper library in LocalAppData so it survives regardless of launch folder.
 
     #[allow(dead_code)]
     pub(crate) fn save_file_1(video_path: PathBuf) -> Result<(), std::io::Error> {
@@ -44,12 +44,14 @@ pub(crate) mod file_saver {
     }
 
     pub fn read_saved_wallpapers() -> Result<Vec<SaveWallpaper>, std::io::Error> {
+        let saved_wallpapers_path = ensure_saved_wallpapers_path()?;
+
         // Missing json simply means the user has not imported anything yet.
-        if !Path::new(SAVE_WALLPAPERS_PATH).exists() {
+        if !saved_wallpapers_path.exists() {
             return Ok(Vec::new());
         }
 
-        let json = fs::read_to_string(SAVE_WALLPAPERS_PATH)?;
+        let json = fs::read_to_string(saved_wallpapers_path)?;
 
         // Invalid json should not crash the GUI; treat it like an empty library for now.
         Ok(serde_json::from_str(&json).unwrap_or_default())
@@ -99,7 +101,7 @@ pub(crate) mod file_saver {
 
         let json = serde_json::to_string_pretty(&vec_wallpaper)?;
 
-        fs::write(SAVE_WALLPAPERS_PATH, json)?;
+        fs::write(save_wallpapers_file_path()?, json)?;
 
         return Ok(());
     }
@@ -108,8 +110,25 @@ pub(crate) mod file_saver {
         // Shared helper so cleanup and import flows both write json the same way.
         let json = serde_json::to_string_pretty(saved_wallpapers)?;
 
-        fs::write(SAVE_WALLPAPERS_PATH, json)?;
+        fs::write(save_wallpapers_file_path()?, json)?;
 
         Ok(())
+    }
+
+    fn ensure_saved_wallpapers_path() -> Result<PathBuf, std::io::Error> {
+        let saved_wallpapers_path = save_wallpapers_file_path()?;
+
+        if saved_wallpapers_path.exists() {
+            return Ok(saved_wallpapers_path);
+        }
+
+        let legacy_path = legacy_save_wallpapers_file_path()?;
+
+        // Copy the old repo-local json once so existing imports keep showing up after the move.
+        if legacy_path != saved_wallpapers_path && legacy_path.exists() {
+            fs::copy(&legacy_path, &saved_wallpapers_path)?;
+        }
+
+        Ok(saved_wallpapers_path)
     }
 }

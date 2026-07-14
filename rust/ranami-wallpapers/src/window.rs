@@ -2,7 +2,8 @@ use std::os::raw::c_void;
 
 use ::windows::Win32::{Foundation::HWND, UI::WindowsAndMessaging::PostMessageW};
 
-use crate::{client_init::log_err::err_log, window::windows::ENGINE_HWND};
+use crate::{ window::windows::ENGINE_HWND};
+use shared::log_err::err_log;
 
 pub(crate) mod windows {
     use crate::{init_gui::init_gui::run_gui, window::postmessage};
@@ -14,8 +15,7 @@ pub(crate) mod windows {
     use windows::Win32::Foundation::*; // idc man i want to code not to do this all day
     use windows::Win32::UI::WindowsAndMessaging::*;
     use windows::core::w;
-
-    use super::super::client_init::log_err::err_log;
+    use shared::log_err::err_log;
     use shared::message::*; // take all message
     use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
     use std::sync::mpsc::{Sender, channel};
