@@ -31,15 +31,15 @@ fn main() {
 
     let tray_menu = Menu::new();
 
-    let test_menu = MenuItem::new("Test", true, None);
-
-    let exit_menu = MenuItem::new("Exit Ranami", true, None);
+    //let test_menu = MenuItem::new("Test", true, None);
 
     let open_gui = MenuItem::new("Change Wallpaper", true, None);
 
-    tray_menu.append(&test_menu).unwrap(); // it not going to give Error belive me
-    tray_menu.append(&exit_menu).unwrap();
+    let exit_menu = MenuItem::new("Exit Ranami", true, None);
+
+    //tray_menu.append(&test_menu).unwrap(); // it not going to give Error belive me
     tray_menu.append(&open_gui).unwrap();
+    tray_menu.append(&exit_menu).unwrap();
 
     let icon = load_embedded_icon();
 
@@ -58,9 +58,9 @@ fn main() {
         *control_flow = ControlFlow::Wait; // verry impotand to use "wait"!
 
         if let Ok(event) = menu_channel.try_recv() {
-            if event.id == test_menu.id() {
-                prototye_v1(WM_ENGINE_TEST, client_data.client_hwnd);
-            }
+            // if event.id == test_menu.id() {
+            //     prototye_v1(WM_ENGINE_TEST, client_data.client_hwnd);
+            // }
 
             if event.id == exit_menu.id() {
                 prototye_v1(WM_ENGINE_EXIT, client_data.client_hwnd);
