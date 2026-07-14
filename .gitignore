@@ -21,3 +21,5 @@ target
 *.json
 # Runtime preview images generated from wallpaper videos.
 cache-wallpaper-thumbnails/
+*.wixpdb
+*.msi

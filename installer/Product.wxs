@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+    <Package
+        Name="Ranami Wallpapers"
+        Manufacturer="Shogun65"
+        Version="0.1.0"
+        Scope="perMachine"
+        UpgradeCode="6c7ca92e-ebfa-4cfd-ba2b-1e96e8295c17">
+
+        <MajorUpgrade
+            DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+        <MediaTemplate EmbedCab="yes" />
+
+        <!-- Wizard UI with license page and feature customization.
+             The desktop shortcut is exposed as its own optional feature below. -->
+        <ui:WixUI Id="WixUI_Mondo" />
+        <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+
+        <Icon Id="RanamiProductIcon" SourceFile="RanamiIcon.ico" />
+        <Property Id="ARPPRODUCTICON" Value="RanamiProductIcon" />
+
+        <StandardDirectory Id="ProgramFiles64Folder">
+            <Directory Id="INSTALLFOLDER" Name="Ranami Wallpapers">
+                <Component Id="cmpLauncherExe" Guid="*">
+                    <File Id="filLauncherExe" Source="Package\ranami-wallpapers.exe" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpGuiExe" Guid="*">
+                    <File Id="filGuiExe" Source="Package\ranami-wallpapers-gui.exe" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpTrayExe" Guid="*">
+                    <File Id="filTrayExe" Source="Package\ranami-wallpapers-tray.exe" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpCoreExe" Guid="*">
+                    <File Id="filCoreExe" Source="Package\RanamiWallpapers.exe" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpFfmpegExe" Guid="*">
+                    <File Id="filFfmpegExe" Source="Package\ffmpeg.exe" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpFfprobeExe" Guid="*">
+                    <File Id="filFfprobeExe" Source="Package\ffprobe.exe" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpAvcodecDll" Guid="*">
+                    <File Id="filAvcodecDll" Source="Package\avcodec-61.dll" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpAvdeviceDll" Guid="*">
+                    <File Id="filAvdeviceDll" Source="Package\avdevice-61.dll" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpAvfilterDll" Guid="*">
+                    <File Id="filAvfilterDll" Source="Package\avfilter-10.dll" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpAvformatDll" Guid="*">
+                    <File Id="filAvformatDll" Source="Package\avformat-61.dll" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpAvutilDll" Guid="*">
+                    <File Id="filAvutilDll" Source="Package\avutil-59.dll" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpPostprocDll" Guid="*">
+                    <File Id="filPostprocDll" Source="Package\postproc-58.dll" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpSwresampleDll" Guid="*">
+                    <File Id="filSwresampleDll" Source="Package\swresample-5.dll" KeyPath="yes" />
+                </Component>
+
+                <Component Id="cmpSwscaleDll" Guid="*">
+                    <File Id="filSwscaleDll" Source="Package\swscale-8.dll" KeyPath="yes" />
+                </Component>
+            </Directory>
+        </StandardDirectory>
+
+        <StandardDirectory Id="ProgramMenuFolder">
+            <Directory Id="PROGRAMMENUDIR" Name="Ranami Wallpapers">
+                <Component Id="cmpStartMenuShortcut" Guid="*">
+                    <Shortcut
+                        Id="scStartMenuLauncher"
+                        Name="Ranami Wallpapers"
+                        Description="Launch Ranami Wallpapers"
+                        Target="[#filLauncherExe]"
+                        WorkingDirectory="INSTALLFOLDER" />
+
+                    <RemoveFolder Id="rmProgramMenuDir" On="uninstall" />
+                    <RegistryValue
+                        Root="HKLM"
+                        Key="Software\Shogun65\RanamiWallpapers"
+                        Name="StartMenuShortcut"
+                        Type="integer"
+                        Value="1"
+                        KeyPath="yes" />
+                </Component>
+            </Directory>
+        </StandardDirectory>
+
+        <StandardDirectory Id="DesktopFolder">
+            <Component Id="cmpDesktopShortcut" Guid="*">
+                <Shortcut
+                    Id="scDesktopLauncher"
+                    Name="Ranami Wallpapers"
+                    Description="Launch Ranami Wallpapers"
+                    Target="[#filLauncherExe]"
+                    WorkingDirectory="INSTALLFOLDER" />
+
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\Shogun65\RanamiWallpapers"
+                    Name="DesktopShortcut"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+            </Component>
+        </StandardDirectory>
+
+        <StandardDirectory Id="LocalAppDataFolder">
+            <!-- Match the exact folder name used by the app code:
+                 %LocalAppData%\RanamiWallpapers -->
+            <Directory Id="RANAMIAPPDATADIR" Name="RanamiWallpapers">
+                <Component Id="cmpAppDataCleanup" Guid="*">
+                    <RemoveFile Id="rmAppDataFiles" Name="*.*" On="uninstall" />
+                    <RegistryValue
+                        Root="HKLM"
+                        Key="Software\Shogun65\RanamiWallpapers"
+                        Name="AppDataCleanup"
+                        Type="integer"
+                        Value="1"
+                        KeyPath="yes" />
+                    <RemoveFolder Id="rmAppDataFolder" On="uninstall" />
+                </Component>
+
+                <Directory Id="RANAMITHUMBCACHEDIR" Name="cache-wallpaper-thumbnails">
+                    <Component Id="cmpThumbnailCacheCleanup" Guid="*">
+                        <RemoveFile Id="rmThumbnailCacheFiles" Name="*.*" On="uninstall" />
+                        <RegistryValue
+                            Root="HKLM"
+                            Key="Software\Shogun65\RanamiWallpapers"
+                            Name="ThumbnailCacheCleanup"
+                            Type="integer"
+                            Value="1"
+                            KeyPath="yes" />
+                        <RemoveFolder Id="rmThumbnailCacheDir" On="uninstall" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </StandardDirectory>
+
+        <Feature
+            Id="MainFeature"
+            Title="Ranami Wallpapers"
+            Description="Core files, launcher, tray, GUI, FFmpeg tools, and Start Menu shortcut."
+            Level="1"
+            Display="expand">
+
+            <ComponentRef Id="cmpLauncherExe" />
+            <ComponentRef Id="cmpGuiExe" />
+            <ComponentRef Id="cmpTrayExe" />
+            <ComponentRef Id="cmpCoreExe" />
+            <ComponentRef Id="cmpFfmpegExe" />
+            <ComponentRef Id="cmpFfprobeExe" />
+            <ComponentRef Id="cmpAvcodecDll" />
+            <ComponentRef Id="cmpAvdeviceDll" />
+            <ComponentRef Id="cmpAvfilterDll" />
+            <ComponentRef Id="cmpAvformatDll" />
+            <ComponentRef Id="cmpAvutilDll" />
+            <ComponentRef Id="cmpPostprocDll" />
+            <ComponentRef Id="cmpSwresampleDll" />
+            <ComponentRef Id="cmpSwscaleDll" />
+            <ComponentRef Id="cmpStartMenuShortcut" />
+            <ComponentRef Id="cmpAppDataCleanup" />
+            <ComponentRef Id="cmpThumbnailCacheCleanup" />
+
+            <Feature
+                Id="DesktopShortcutFeature"
+                Title="Desktop Shortcut"
+                Description="Create a desktop shortcut named Ranami Wallpapers."
+                Level="2">
+                <ComponentRef Id="cmpDesktopShortcut" />
+            </Feature>
+        </Feature>
+
+    </Package>
+
+</Wix>
