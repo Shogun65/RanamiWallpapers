@@ -6,7 +6,7 @@
     <Package
         Name="Ranami Wallpapers"
         Manufacturer="Shogun65"
-        Version="0.1.0"
+        Version="0.1.1"
         Scope="perMachine"
         UpgradeCode="6c7ca92e-ebfa-4cfd-ba2b-1e96e8295c17">
 
@@ -15,10 +15,11 @@
 
         <MediaTemplate EmbedCab="yes" />
 
-        <!-- Wizard UI with license page and feature customization.
-             The desktop shortcut is exposed as its own optional feature below. -->
-        <ui:WixUI Id="WixUI_Mondo" />
+        <!-- Keep the wizard simple:
+             license agreement -> choose install folder -> install. -->
+        <ui:WixUI Id="WixUI_InstallDir" />
         <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
         <Icon Id="RanamiProductIcon" SourceFile="RanamiIcon.ico" />
         <Property Id="ARPPRODUCTICON" Value="RanamiProductIcon" />
@@ -124,6 +125,25 @@
             </Component>
         </StandardDirectory>
 
+        <StandardDirectory Id="StartupFolder">
+            <Component Id="cmpStartupShortcut" Guid="*">
+                <Shortcut
+                    Id="scStartupLauncher"
+                    Name="Ranami Wallpapers"
+                    Description="Launch Ranami Wallpapers when Windows starts"
+                    Target="[#filLauncherExe]"
+                    WorkingDirectory="INSTALLFOLDER" />
+
+                <RegistryValue
+                    Root="HKLM"
+                    Key="Software\Shogun65\RanamiWallpapers"
+                    Name="StartupShortcut"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+            </Component>
+        </StandardDirectory>
+
         <StandardDirectory Id="LocalAppDataFolder">
             <!-- Match the exact folder name used by the app code:
                  %LocalAppData%\RanamiWallpapers -->
@@ -159,7 +179,7 @@
         <Feature
             Id="MainFeature"
             Title="Ranami Wallpapers"
-            Description="Core files, launcher, tray, GUI, FFmpeg tools, and Start Menu shortcut."
+            Description="Core files, launcher, tray, GUI, FFmpeg tools, shortcuts, and startup entry."
             Level="1"
             Display="expand">
 
@@ -178,16 +198,10 @@
             <ComponentRef Id="cmpSwresampleDll" />
             <ComponentRef Id="cmpSwscaleDll" />
             <ComponentRef Id="cmpStartMenuShortcut" />
+            <ComponentRef Id="cmpDesktopShortcut" />
+            <ComponentRef Id="cmpStartupShortcut" />
             <ComponentRef Id="cmpAppDataCleanup" />
             <ComponentRef Id="cmpThumbnailCacheCleanup" />
-
-            <Feature
-                Id="DesktopShortcutFeature"
-                Title="Desktop Shortcut"
-                Description="Create a desktop shortcut named Ranami Wallpapers."
-                Level="2">
-                <ComponentRef Id="cmpDesktopShortcut" />
-            </Feature>
         </Feature>
 
     </Package>
