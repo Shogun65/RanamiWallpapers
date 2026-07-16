@@ -6,7 +6,7 @@
     <Package
         Name="Ranami Wallpapers"
         Manufacturer="Shogun65"
-        Version="0.1.1"
+        Version="0.1.2"
         Scope="perMachine"
         UpgradeCode="6c7ca92e-ebfa-4cfd-ba2b-1e96e8295c17">
 

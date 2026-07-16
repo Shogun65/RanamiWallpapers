@@ -1,5 +1,6 @@
 import { VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
 import { Sidebar } from "sidebar.slint";
+import { SidebarButton } from "sidebar-button.slint";
 import { WallpaperCard, WallpaperCardData } from "wallpaper-card.slint";
 
 export { WallpaperCardData } from "wallpaper-card.slint";
@@ -17,6 +18,7 @@ export component AppWindow inherits Window {
     callback wallpaper_card_double_clicked(string);
     // Rust owns the wallpaper list and pushes card data into this window property.
     in-out property <[WallpaperCardData]> wallpapers: [];
+    in-out property <bool> about_open: false;
 
     VerticalBox {
 
@@ -30,6 +32,9 @@ export component AppWindow inherits Window {
                 width: 220px;
                 import_wallpaper => {
                     root.import_wallpaper();
+                }
+                show_about => {
+                    root.about_open = true;
                 }
             }
 
@@ -156,6 +161,212 @@ export component AppWindow inherits Window {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    if root.about_open: Rectangle {
+        x: 0px;
+        y: 0px;
+        width: root.width;
+        height: root.height;
+        background: #05040ab8;
+
+        TouchArea {
+            width: parent.width;
+            height: parent.height;
+
+            clicked => {
+                root.about_open = false;
+            }
+        }
+
+        Rectangle {
+            width: min(620px, root.width - 64px);
+            height: 500px;
+            x: (root.width - self.width) / 2;
+            y: (root.height - self.height) / 2;
+            background: #130f1b;
+            border-radius: 18px;
+            border-width: 1px;
+            border-color: #3c2b59;
+            clip: true;
+
+            SidebarButton {
+                x: parent.width - 114px;
+                y: 18px;
+                width: 90px;
+                title: "Close";
+
+                clicked => {
+                    root.about_open = false;
+                }
+            }
+
+            Text {
+                x: 24px;
+                y: 24px;
+                width: parent.width - 150px;
+                height: 30px;
+                text: "Ranami Wallpapers";
+                color: white;
+                font-size: 28px;
+                font-weight: 700;
+                overflow: elide;
+            }
+
+            Text {
+                x: 24px;
+                y: 66px;
+                width: parent.width - 48px;
+                height: 40px;
+                text: "Windows live wallpapers with a native rendering core and a simple desktop app experience.";
+                color: #d2c8e8;
+                font-size: 14px;
+                wrap: word-wrap;
+            }
+
+            Rectangle {
+                x: 24px;
+                y: 126px;
+                width: parent.width - 48px;
+                height: 64px;
+                background: #1a1425;
+                border-radius: 12px;
+                border-width: 1px;
+                border-color: #332547;
+
+                Text {
+                    x: 16px;
+                    y: 10px;
+                    width: parent.width - 32px;
+                    height: 16px;
+                    text: "Version";
+                    color: #9f8ac4;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+
+                Text {
+                    x: 16px;
+                    y: 30px;
+                    width: parent.width - 32px;
+                    height: 20px;
+                    text: "v0.1.2-beta";
+                    color: white;
+                    font-size: 18px;
+                    font-weight: 600;
+                }
+            }
+
+            Rectangle {
+                x: 24px;
+                y: 202px;
+                width: parent.width - 48px;
+                height: 76px;
+                background: #1a1425;
+                border-radius: 12px;
+                border-width: 1px;
+                border-color: #332547;
+
+                Text {
+                    x: 16px;
+                    y: 10px;
+                    width: parent.width - 32px;
+                    height: 16px;
+                    text: "Built with";
+                    color: #9f8ac4;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+
+                Text {
+                    x: 16px;
+                    y: 30px;
+                    width: parent.width - 32px;
+                    height: 28px;
+                    text: "C++, Rust, DirectX 11, DirectComposition, Slint, FFmpeg";
+                    color: white;
+                    font-size: 15px;
+                    wrap: word-wrap;
+                }
+            }
+
+            Rectangle {
+                x: 24px;
+                y: 290px;
+                width: parent.width - 48px;
+                height: 96px;
+                background: #1a1425;
+                border-radius: 12px;
+                border-width: 1px;
+                border-color: #332547;
+
+                Text {
+                    x: 16px;
+                    y: 10px;
+                    width: parent.width - 32px;
+                    height: 16px;
+                    text: "Special thanks";
+                    color: #9f8ac4;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+
+                Text {
+                    x: 16px;
+                    y: 30px;
+                    width: parent.width - 32px;
+                    height: 44px;
+                    text: "FFmpeg, D3D11, Slint, and the APIs that made this project possible.";
+                    color: white;
+                    font-size: 15px;
+                    wrap: word-wrap;
+                }
+            }
+
+            Rectangle {
+                x: 24px;
+                y: 398px;
+                width: parent.width - 48px;
+                height: 58px;
+                background: #1a1425;
+                border-radius: 12px;
+                border-width: 1px;
+                border-color: #332547;
+
+                Text {
+                    x: 16px;
+                    y: 10px;
+                    width: parent.width - 32px;
+                    height: 16px;
+                    text: "License";
+                    color: #9f8ac4;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+
+                Text {
+                    x: 16px;
+                    y: 28px;
+                    width: parent.width - 32px;
+                    height: 18px;
+                    text: "AGPL v3";
+                    color: white;
+                    font-size: 15px;
+                    font-weight: 600;
+                }
+            }
+
+            Text {
+                x: 24px;
+                y: 468px;
+                width: parent.width - 48px;
+                height: 18px;
+                text: "© Shogun65 2026";
+                color: #8a7aa8;
+                font-size: 13px;
+                horizontal-alignment: center;
             }
         }
     }

@@ -9,6 +9,7 @@ export component Sidebar inherits Rectangle {
     border-color: #2a2040;
 
     callback import_wallpaper();
+    callback show_about();
 
     VerticalBox {
         padding: 10px;
@@ -29,17 +30,12 @@ export component Sidebar inherits Rectangle {
             background: #312648;
         }
 
-        // These buttons are visual placeholders for features that can be wired later.
         SidebarButton {
-            title : "⭐ Favorites";
-        }
+            title : "❕ About";
 
-        SidebarButton {
-            title : "⚙ Settings";
-        }
-
-        SidebarButton {
-            title : "❕About";
+            clicked => {
+                root.show_about();
+            }
         }
     }
 }
