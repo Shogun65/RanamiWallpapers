@@ -4,7 +4,7 @@
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
 
     <Package
-        Name="Ranami Wallpapers-V0.1.0"
+        Name="Ranami Wallpapers"
         Manufacturer="Shogun65"
         Version="0.1.0"
         Scope="perMachine"
