@@ -144,38 +144,6 @@
             </Component>
         </StandardDirectory>
 
-        <StandardDirectory Id="LocalAppDataFolder">
-            <!-- Match the exact folder name used by the app code:
-                 %LocalAppData%\RanamiWallpapers -->
-            <Directory Id="RANAMIAPPDATADIR" Name="RanamiWallpapers">
-                <Component Id="cmpAppDataCleanup" Guid="*">
-                    <RemoveFile Id="rmAppDataFiles" Name="*.*" On="uninstall" />
-                    <RegistryValue
-                        Root="HKLM"
-                        Key="Software\Shogun65\RanamiWallpapers"
-                        Name="AppDataCleanup"
-                        Type="integer"
-                        Value="1"
-                        KeyPath="yes" />
-                    <RemoveFolder Id="rmAppDataFolder" On="uninstall" />
-                </Component>
-
-                <Directory Id="RANAMITHUMBCACHEDIR" Name="cache-wallpaper-thumbnails">
-                    <Component Id="cmpThumbnailCacheCleanup" Guid="*">
-                        <RemoveFile Id="rmThumbnailCacheFiles" Name="*.*" On="uninstall" />
-                        <RegistryValue
-                            Root="HKLM"
-                            Key="Software\Shogun65\RanamiWallpapers"
-                            Name="ThumbnailCacheCleanup"
-                            Type="integer"
-                            Value="1"
-                            KeyPath="yes" />
-                        <RemoveFolder Id="rmThumbnailCacheDir" On="uninstall" />
-                    </Component>
-                </Directory>
-            </Directory>
-        </StandardDirectory>
-
         <Feature
             Id="MainFeature"
             Title="Ranami Wallpapers"
@@ -200,8 +168,6 @@
             <ComponentRef Id="cmpStartMenuShortcut" />
             <ComponentRef Id="cmpDesktopShortcut" />
             <ComponentRef Id="cmpStartupShortcut" />
-            <ComponentRef Id="cmpAppDataCleanup" />
-            <ComponentRef Id="cmpThumbnailCacheCleanup" />
         </Feature>
 
     </Package>
