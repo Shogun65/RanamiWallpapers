@@ -132,8 +132,12 @@ pub fn main_loop(
             if let Ok(Some(exit_status)) = tray_child.try_wait() {
                 println!("tray exit status: {}", exit_status);
                 if exit_status.success() {
-                    current_child_tray.take();
+                    current_child_tray = None;
                     break 'outer;
+                }
+                else {
+                    current_child_tray = None; // make the None so it top init_tray can run
+                    // tray again thats it
                 }
             }
         }
