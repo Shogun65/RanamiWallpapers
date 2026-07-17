@@ -6,6 +6,10 @@ use crate::{
 };
 use shared::{namepipe::NamePipeCommands, message::WM_ENGINE_OPEN_GUI, 
     usefull_fn::request_client_post, log_err::err_log};
+
+use windows::Win32::Foundation::{HWND};
+use windows::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, IsZoomed};
+
 use std::process::Child;
 use std::{
     sync::{Arc, Mutex},
@@ -60,6 +64,21 @@ pub fn main_loop(
         let mut next_wallpaper: Option<String> = None;
 
         init_tray(&mut current_child_tray, client_hwnd);
+        if check_tray_alive(&mut current_child_tray){break 'outer;}
+        
+
+        unsafe {
+            let hwnd: HWND = GetForegroundWindow();
+            if !hwnd.is_invalid() && IsZoomed(hwnd).into() && current_child.is_some()
+            {
+                kill_ranami_core(&mut current_child);
+                // ok you will be confued why this doing here well to use current wallpaper let me explain
+                // ranami_crash take current wallpaper and make as next_wallpaper simple enough
+                // but why we useing this because it work perfactly fine and also we write less code
+                ranami_crash = true;
+                continue; // this is improtand
+            }
+        }
 
         if ranami_crash {
             if let Some(reuse_wallpaper) = current_wallpaper.take() {
@@ -128,19 +147,7 @@ pub fn main_loop(
             }
         }
 
-        if let Some(tray_child) = current_child_tray.as_mut() {
-            if let Ok(Some(exit_status)) = tray_child.try_wait() {
-                println!("tray exit status: {}", exit_status);
-                if exit_status.success() {
-                    current_child_tray = None;
-                    break 'outer;
-                }
-                else {
-                    current_child_tray = None; // make the None so it top init_tray can run
-                    // tray again thats it
-                }
-            }
-        }
+        if check_tray_alive(&mut current_child_tray){break 'outer;}
         thread::sleep(Duration::from_millis(10));
     }
     kill_tray_and_set_engine_hwnd_to_0(&mut current_child_tray); // just in case
@@ -181,4 +188,36 @@ fn kill_tray_and_set_engine_hwnd_to_0(tray_child: &mut Option<Child>) {
         let cw = tray_child.wait();
         println!("tray child wait: {:?}", cw);
     }
+}
+
+fn kill_ranami_core(current_child : &mut Option<Child>){
+    if let Some(mut ranami_child) = current_child.take(){
+        let rt = ranami_child.kill();
+        
+        println!("kill_ranami_core: {:?}", rt);
+        if let Err(err) = rt{
+            err_log(&format!("error on killing the child on kill_ranami_core: {err}"));
+        }
+    }
+}
+
+fn check_tray_alive(current_child_tray: &mut Option<Child>) -> bool {
+
+    if let Some(tray_child) = current_child_tray.as_mut() {
+
+        if let Ok(Some(exit_status)) = tray_child.try_wait() {
+
+            println!("tray exit status: {}", exit_status);
+            if exit_status.success() {
+                *current_child_tray = None;
+                return true;
+            }
+            else {
+                *current_child_tray = None; // make the None so on top init_tray can run
+                // tray again thats it
+                return false;
+            }
+        }
+    };
+    return false;
 }
