@@ -9,6 +9,7 @@ mod main_loop;
 mod namepipe;
 mod startup_file_check;
 mod window;
+mod set_wallpaper_on_wndow;
 
 use crate::namepipe::init_namepipe::run_namepipe_server;
 use arg::{error, init};
