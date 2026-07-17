@@ -24,7 +24,7 @@ void Window::InitDebugConsole()
     setvbuf(stderr, NULL, _IONBF, 0);
      
     printf("----Debug console----\n");
-    printf("----EXE VERSION: V0.08----\n");
+    printf("----EXE VERSION: V0.2.0----\n");
     fflush(stdout);
 }
 
