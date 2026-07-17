@@ -69,14 +69,18 @@ pub fn main_loop(
 
         unsafe {
             let hwnd: HWND = GetForegroundWindow();
-            if !hwnd.is_invalid() && IsZoomed(hwnd).into() && current_child.is_some()
+            if !hwnd.is_invalid() && IsZoomed(hwnd).into()
             {
+                println!("runing");
+                println!("current_child: {:?}", current_child);
                 kill_ranami_core(&mut current_child);
+                println!("current_child after kill_ranami_core: {:?}", current_child);
                 // ok you will be confued why this doing here well to use current wallpaper let me explain
                 // ranami_crash take current wallpaper and make as next_wallpaper simple enough
                 // but why we useing this because it work perfactly fine and also we write less code
                 ranami_crash = true;
-                continue; // this is improtand
+                thread::sleep(Duration::from_millis(10)); // verry improtand to not sping CPU
+                continue;
             }
         }
 
@@ -193,7 +197,7 @@ fn kill_tray_and_set_engine_hwnd_to_0(tray_child: &mut Option<Child>) {
 fn kill_ranami_core(current_child : &mut Option<Child>){
     if let Some(mut ranami_child) = current_child.take(){
         let rt = ranami_child.kill();
-        
+        let _ = ranami_child.wait();
         println!("kill_ranami_core: {:?}", rt);
         if let Err(err) = rt{
             err_log(&format!("error on killing the child on kill_ranami_core: {err}"));
