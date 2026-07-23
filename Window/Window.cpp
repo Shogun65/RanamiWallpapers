@@ -100,7 +100,7 @@ bool Window::CreateMainWindow(HINSTANCE hInstance)
     _hwnd = CreateWindowEx(
         WS_EX_NOREDIRECTIONBITMAP | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW,
         wc.lpszClassName,
-        L"ALive-Wallpaper-Engine-CHAHAT",
+        L"",
         WS_POPUP,
         0, 0,
         GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
