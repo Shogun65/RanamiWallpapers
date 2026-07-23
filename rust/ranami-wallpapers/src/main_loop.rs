@@ -26,7 +26,7 @@ pub fn main_loop(
     let mut ranami_crash = false;
     let mut current_child_tray: Option<Child> = None;
     let mut ranami_crash_count = 0;
-
+    let mut all_fouce_window_hwnd: Vec<HWND> = Vec::new();
     if let Some(wallpaper_path) = read_file_1() {
         if !wallpaper_path.trim().is_empty() {
 
@@ -67,22 +67,7 @@ pub fn main_loop(
         if check_tray_alive(&mut current_child_tray){break 'outer;}
         
 
-        unsafe {
-            let hwnd: HWND = GetForegroundWindow();
-            if !hwnd.is_invalid() && IsZoomed(hwnd).into()
-            {
-                println!("runing");
-                println!("current_child: {:?}", current_child);
-                kill_ranami_core(&mut current_child);
-                println!("current_child after kill_ranami_core: {:?}", current_child);
-                // ok you will be confued why this doing here well to use current wallpaper let me explain
-                // ranami_crash take current wallpaper and make as next_wallpaper simple enough
-                // but why we useing this because it work perfactly fine and also we write less code
-                ranami_crash = true;
-                thread::sleep(Duration::from_millis(10)); // verry improtand to not sping CPU
-                continue;
-            }
-        }
+        if check_foreground_window(&mut current_child, &mut ranami_crash, &mut all_fouce_window_hwnd) == true {continue;}
 
         if ranami_crash {
             if let Some(reuse_wallpaper) = current_wallpaper.take() {
@@ -223,5 +208,37 @@ fn check_tray_alive(current_child_tray: &mut Option<Child>) -> bool {
             }
         }
     };
+    return false;
+}
+
+fn check_foreground_window(
+    current_child: &mut Option<Child>,
+    ranami_crash: &mut bool,
+    all_fouce_window_hwnd: &mut Vec<HWND>
+    )-> bool
+{
+
+    unsafe {
+        let hwnd: HWND = GetForegroundWindow();
+
+        if !all_fouce_window_hwnd.contains(&hwnd){all_fouce_window_hwnd.push(hwnd);}
+        
+        for hwnds in &*all_fouce_window_hwnd{
+            
+            if !hwnds.is_invalid() && IsZoomed(hwnds.clone()).into()
+            {
+                println!("runing");
+                println!("current_child: {:?}", current_child);
+                kill_ranami_core(current_child);
+                println!("current_child after kill_ranami_core: {:?}", current_child);
+                // ok you will be confued why this doing here well to use current wallpaper let me explain
+                // ranami_crash take current wallpaper and make as next_wallpaper simple enough
+                // but why we useing this because it work perfactly fine and also we write less code
+                *ranami_crash = true;
+                thread::sleep(Duration::from_millis(10)); // verry improtand to not sping CPU
+                return true;
+            }
+        }
+    }
     return false;
 }
