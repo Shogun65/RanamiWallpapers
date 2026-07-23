@@ -11,18 +11,42 @@ mod startup_file_check;
 mod window;
 mod set_wallpaper_on_wndow;
 
-use crate::namepipe::init_namepipe::run_namepipe_server;
+use namepipe::init_namepipe::run_namepipe_server;
 use arg::{error, init};
 use client_init::client_init::client_init;
 use client_init::error::ErrorClient;
 use shared::log_err::err_log;
 use shared::namepipe::NamePipeCommands;
+use windows::Win32::System::Threading::CreateMutexW;
 use std::sync::{Arc, Mutex};
 use window::windows::init_window;
-
+use windows::core::w;
+use windows::Win32::Foundation::{ERROR_ALREADY_EXISTS, GetLastError};
 use tokio::runtime::{Handle, Runtime};
+use init_gui::init_gui::run_gui;
+
+fn check_for_ranami_runing() -> bool
+{
+    unsafe{
+        let _gmutex = CreateMutexW(
+                                    None, true,
+                                     w!("Global\\Ranami_Wallpaper_Engine_Mutex"));
+
+        if GetLastError() == ERROR_ALREADY_EXISTS{
+            return true;
+        }
+        return false;
+    }
+}
 
 fn main() {
+
+    // true if ranami already runing
+    if check_for_ranami_runing(){
+        let _ = run_gui();
+        std::process::exit(0);
+    }
+
     // that init fun for arg parse.. well sometime nameing get messy but anyways
     match init::init() {
         Ok(_) => {}
