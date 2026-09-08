@@ -17,9 +17,10 @@ pub(crate) mod init {
     pub async fn init_a_file_picker() -> Option<FileHandle> {
         // This is the picker the GUI uses so imports can happen without blocking the window thread.
         let file_handle = AsyncFileDialog::new()
-            .add_filter("video", &["mp4", "mkv", "avi", "mov", "wmv"])
+            .add_filter("video", &["mp4", "mkv", "avi", "mov"])
+            .add_filter("all files", &["*"])
             .set_directory("/")
-            .set_title("Alive-Wallpaper-Engine")
+            .set_title("Pick Video For Play!")
             .pick_file()
             .await;
 
