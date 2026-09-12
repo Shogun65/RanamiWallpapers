@@ -107,9 +107,9 @@ pub fn main_loop(
                 }
 
                 // static wallpaper set here                
-                let a = set_static_wallpaper(std::path::PathBuf::from(&wallpaper_path));
+                let _a = set_static_wallpaper(std::path::PathBuf::from(&wallpaper_path));
                 #[cfg(debug_assertions)]
-                println!("generate_static_wallpaper: {:#?}", a);
+                println!("generate_static_wallpaper: {:#?}", _a);
                 //
 
                 let child = run_wallpaper_engine(&wallpaper_path, "3", client_hwnd)?;
