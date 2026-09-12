@@ -1,7 +1,7 @@
 import { VerticalBox } from "std-widgets.slint";
 import { SidebarButton } from "sidebar-button.slint";
 
-export component Sidebar inherits Rectangle {
+export component AppSidebar inherits Rectangle {
     background: #120f1a;
     width: 220px;
     border-radius: 8px;
@@ -17,13 +17,9 @@ export component Sidebar inherits Rectangle {
 
         SidebarButton {
             title: "➕ Import Wallpaper";
-
-            clicked => {
-                root.import_wallpaper();
-            }
+            clicked => { root.import_wallpaper(); }
         }
 
-        // Simple separator between the one live action and the future sections below it.
         Rectangle {
             height: 1px;
             border-radius: 8px;
@@ -31,11 +27,8 @@ export component Sidebar inherits Rectangle {
         }
 
         SidebarButton {
-            title : "❕ About";
-
-            clicked => {
-                root.show_about();
-            }
+            title: "❕ About";
+            clicked => { root.show_about(); }
         }
     }
 }

@@ -1,0 +1,123 @@
+import { VerticalBox, ScrollView } from "std-widgets.slint";
+import { WallpaperCard, WallpaperCardData } from "../components/wallpaper-card.slint";
+
+export component LibraryView inherits Rectangle {
+    in property <[WallpaperCardData]> wallpapers: [];
+    callback wallpaper_card_double_clicked(string);
+
+    background: #100d16;
+    border-radius: 14px;
+    border-width: 1px;
+    border-color: #241a36;
+    clip: true;
+
+    VerticalBox {
+        padding: 20px;
+        spacing: 16px;
+
+        Rectangle {
+            height: 58px;
+            background: #181224;
+            border-radius: 12px;
+            border-width: 1px;
+            border-color: #34254f;
+
+            Text {
+                x: 18px;
+                y: 16px;
+                width: parent.width - 36px;
+                height: 24px;
+                text: "Wallpaper Library";
+                color: white;
+                font-size: 22px;
+                font-weight: 600;
+                overflow: elide;
+            }
+        }
+
+        Rectangle {
+            background: #0c0a13;
+            border-radius: 16px;
+            border-width: 1px;
+            border-color: #21192f;
+            clip: true;
+
+            if root.wallpapers.length == 0: Rectangle {
+                background: transparent;
+
+                Text {
+                    x: 0;
+                    y: parent.height / 2 - 28px;
+                    width: parent.width;
+                    height: 26px;
+                    text: "No wallpapers saved yet";
+                    color: white;
+                    font-size: 22px;
+                    font-weight: 600;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    x: 50px;
+                    y: parent.height / 2 + 8px;
+                    width: parent.width - 100px;
+                    height: 36px;
+                    text: "Use Import Wallpaper on the left and every saved wallpaper will show up here as a card.";
+                    color: #998cab;
+                    font-size: 13px;
+                    wrap: word-wrap;
+                    horizontal-alignment: center;
+                }
+            }
+
+            if root.wallpapers.length > 0: library-scroll := ScrollView {
+                width: 100%;
+                height: 100%;
+                private property <length> grid-gap: 16px;
+                private property <length> grid-padding: 20px;
+                private property <length> card-height: 238px;
+                private property <int> column-count:
+                    self.visible-width > 1420px ? 5 :
+                    self.visible-width > 1160px ? 4 :
+                    self.visible-width > 900px ? 3 :
+                    self.visible-width > 620px ? 2 : 1;
+                private property <length> card-width:
+                    min(
+                        280px,
+                        max(
+                            220px,
+                            (self.visible-width - self.grid-padding * 2 - (self.column-count - 1) * self.grid-gap) / self.column-count
+                        )
+                    );
+                private property <int> row-count:
+                    root.wallpapers.length > 0 ? floor((root.wallpapers.length - 1) / self.column-count) + 1 : 0;
+
+                viewport-width: self.visible-width;
+                viewport-height: max(
+                    self.visible-height,
+                    self.grid-padding * 2 + self.row-count * self.card-height + max(0px, (self.row-count - 1) * self.grid-gap)
+                );
+
+                function row-for-index(index: int) -> int {
+                    floor(index / self.column-count)
+                }
+
+                function column-for-index(index: int) -> int {
+                    mod(index, self.column-count)
+                }
+
+                for wallpaper[index] in root.wallpapers: WallpaperCard {
+                    x: library-scroll.grid-padding + library-scroll.column-for-index(index) * (library-scroll.card-width + library-scroll.grid-gap);
+                    y: library-scroll.grid-padding + library-scroll.row-for-index(index) * (library-scroll.card-height + library-scroll.grid-gap);
+                    width: library-scroll.card-width;
+                    height: library-scroll.card-height;
+                    data: wallpaper;
+                    wallpaper_card_double_clicked(wallpaper_path) => {
+                        root.wallpaper_card_double_clicked(wallpaper_path);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -10,7 +10,7 @@ export component SidebarButton inherits Rectangle {
     callback clicked();
 
     Text {
-        x : 10px;
+        x: 10px;
         text: title;
         color: white;
         font-size: 15px;
@@ -18,9 +18,7 @@ export component SidebarButton inherits Rectangle {
     }
 
     ta := TouchArea {
-        clicked => {
-            root.clicked();
-        }
+        clicked => { root.clicked(); }
     }
 
     // Hover feedback helps placeholder buttons still feel interactive and consistent.

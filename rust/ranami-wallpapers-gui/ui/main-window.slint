@@ -1,9 +1,12 @@
 import { VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
-import { Sidebar } from "sidebar.slint";
-import { SidebarButton } from "sidebar-button.slint";
-import { WallpaperCard, WallpaperCardData } from "wallpaper-card.slint";
+import { AppSidebar } from "components/app-sidebar.slint";
+import { AboutDialog } from "components/about-dialog.slint";
+import { LibraryView } from "views/library-view.slint";
+import { WallpaperCardData } from "components/wallpaper-card.slint";
 
-export { WallpaperCardData } from "wallpaper-card.slint";
+// This is deliberately the small composition root for the GUI. Rust continues
+// to compile this file and talks only to the properties and callbacks below.
+export { WallpaperCardData } from "components/wallpaper-card.slint";
 
 export component AppWindow inherits Window {
     width: 1250px;
@@ -20,354 +23,30 @@ export component AppWindow inherits Window {
     in-out property <[WallpaperCardData]> wallpapers: [];
     in-out property <bool> about_open: false;
 
-    VerticalBox {
+    HorizontalBox {
+        height: root.height;
+        padding: 16px;
+        spacing: 16px;
 
-        HorizontalBox {
-            height: root.height;
-            padding: 16px;
-            spacing: 16px;
-            
-            // Keep navigation actions separate from the wallpaper library area.
-            Sidebar {
-                width: 220px;
-                import_wallpaper => {
-                    root.import_wallpaper();
-                }
-                show_about => {
-                    root.about_open = true;
-                }
-            }
+        AppSidebar {
+            width: 220px;
+            import_wallpaper => { root.import_wallpaper(); }
+            show_about => { root.about_open = true; }
+        }
 
-            // The right side is the actual library view with header, empty state, and card grid.
-            Rectangle {
-                background: #100d16;
-                border-radius: 14px;
-                border-width: 1px;
-                border-color: #241a36;
-                clip: true;
-
-                VerticalBox {
-                    padding: 20px;
-                    spacing: 16px;
-
-                    Rectangle {
-                        height: 58px;
-                        background: #181224;
-                        border-radius: 12px;
-                        border-width: 1px;
-                        border-color: #34254f;
-
-                        Text {
-                            x: 18px;
-                            y: 16px;
-                            width: parent.width - 36px;
-                            height: 24px;
-                            text: "Wallpaper Library";
-                            color: white;
-                            font-size: 22px;
-                            font-weight: 600;
-                            overflow: elide;
-                        }
-                    }
-
-                    Rectangle {
-                        background: #0c0a13;
-                        border-radius: 16px;
-                        border-width: 1px;
-                        border-color: #21192f;
-                        clip: true;
-
-                        if root.wallpapers.length == 0: Rectangle {
-                            background: transparent;
-
-                            Text {
-                                x: 0;
-                                y: parent.height / 2 - 28px;
-                                width: parent.width;
-                                height: 26px;
-                                text: "No wallpapers saved yet";
-                                color: white;
-                                font-size: 22px;
-                                font-weight: 600;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                            }
-
-                            Text {
-                                x: 50px;
-                                y: parent.height / 2 + 8px;
-                                width: parent.width - 100px;
-                                height: 36px;
-                                text: "Use Import Wallpaper on the left and every saved wallpaper will show up here as a card.";
-                                color: #998cab;
-                                font-size: 13px;
-                                wrap: word-wrap;
-                                horizontal-alignment: center;
-                            }
-                        }
-
-                        if root.wallpapers.length > 0: library-scroll := ScrollView {
-                            width: 100%;
-                            height: 100%;
-                            private property <length> grid-gap: 16px;
-                            private property <length> grid-padding: 20px;
-                            // Cards are taller now so the thumbnail preview gets more space.
-                            private property <length> card-height: 238px;
-                            // Slint does not have a built-in masonry/grid here, so the window
-                            // computes a simple responsive column count from the visible width.
-                            private property <int> column-count:
-                                self.visible-width > 1420px ? 5 :
-                                self.visible-width > 1160px ? 4 :
-                                self.visible-width > 900px ? 3 :
-                                self.visible-width > 620px ? 2 : 1;
-                            // Card width grows and shrinks with the viewport, but stays inside
-                            // the same min/max size range as WallpaperCard itself.
-                            private property <length> card-width:
-                                min(
-                                    280px,
-                                    max(
-                                        220px,
-                                        (self.visible-width - self.grid-padding * 2 - (self.column-count - 1) * self.grid-gap) / self.column-count
-                                    )
-                                );
-                            private property <int> row-count:
-                                root.wallpapers.length > 0 ? floor((root.wallpapers.length - 1) / self.column-count) + 1 : 0;
-
-                            viewport-width: self.visible-width;
-                            viewport-height: max(
-                                self.visible-height,
-                                self.grid-padding * 2 + self.row-count * self.card-height + max(0px, (self.row-count - 1) * self.grid-gap)
-                            );
-
-                            function row-for-index(index: int) -> int {
-                                floor(index / self.column-count)
-                            }
-
-                            function column-for-index(index: int) -> int {
-                                mod(index, self.column-count)
-                            }
-
-                            for wallpaper[index] in root.wallpapers: WallpaperCard {
-                                x: library-scroll.grid-padding + library-scroll.column-for-index(index) * (library-scroll.card-width + library-scroll.grid-gap);
-                                y: library-scroll.grid-padding + library-scroll.row-for-index(index) * (library-scroll.card-height + library-scroll.grid-gap);
-                                width: library-scroll.card-width;
-                                height: library-scroll.card-height;
-                                data: wallpaper;
-                                // Bubble card interactions back to Rust with the saved wallpaper path.
-                                wallpaper_card_double_clicked(wallpaper_path) => {
-                                    root.wallpaper_card_double_clicked(wallpaper_path);
-                                }
-                            }
-                        }
-                    }
-                }
+        LibraryView {
+            wallpapers: root.wallpapers;
+            wallpaper_card_double_clicked(wallpaper_path) => {
+                root.wallpaper_card_double_clicked(wallpaper_path);
             }
         }
     }
 
-    if root.about_open: Rectangle {
+    if root.about_open: AboutDialog {
         x: 0px;
         y: 0px;
         width: root.width;
         height: root.height;
-        background: #05040ab8;
-
-        TouchArea {
-            width: parent.width;
-            height: parent.height;
-
-            clicked => {
-                root.about_open = false;
-            }
-        }
-
-        Rectangle {
-            width: min(620px, root.width - 64px);
-            height: 500px;
-            x: (root.width - self.width) / 2;
-            y: (root.height - self.height) / 2;
-            background: #130f1b;
-            border-radius: 18px;
-            border-width: 1px;
-            border-color: #3c2b59;
-            clip: true;
-
-            SidebarButton {
-                x: parent.width - 114px;
-                y: 18px;
-                width: 90px;
-                title: "Close";
-
-                clicked => {
-                    root.about_open = false;
-                }
-            }
-
-            Text {
-                x: 24px;
-                y: 24px;
-                width: parent.width - 150px;
-                height: 30px;
-                text: "Ranami Wallpapers";
-                color: white;
-                font-size: 28px;
-                font-weight: 700;
-                overflow: elide;
-            }
-
-            Text {
-                x: 24px;
-                y: 66px;
-                width: parent.width - 48px;
-                height: 40px;
-                text: "Windows live wallpapers with a native rendering core and a simple desktop app experience.";
-                color: #d2c8e8;
-                font-size: 14px;
-                wrap: word-wrap;
-            }
-
-            Rectangle {
-                x: 24px;
-                y: 126px;
-                width: parent.width - 48px;
-                height: 64px;
-                background: #1a1425;
-                border-radius: 12px;
-                border-width: 1px;
-                border-color: #332547;
-
-                Text {
-                    x: 16px;
-                    y: 10px;
-                    width: parent.width - 32px;
-                    height: 16px;
-                    text: "Version";
-                    color: #9f8ac4;
-                    font-size: 12px;
-                    font-weight: 600;
-                }
-
-                Text {
-                    x: 16px;
-                    y: 30px;
-                    width: parent.width - 32px;
-                    height: 20px;
-                    text: "v0.3.0-beta";
-                    color: white;
-                    font-size: 18px;
-                    font-weight: 600;
-                }
-            }
-
-            Rectangle {
-                x: 24px;
-                y: 202px;
-                width: parent.width - 48px;
-                height: 76px;
-                background: #1a1425;
-                border-radius: 12px;
-                border-width: 1px;
-                border-color: #332547;
-
-                Text {
-                    x: 16px;
-                    y: 10px;
-                    width: parent.width - 32px;
-                    height: 16px;
-                    text: "Built with";
-                    color: #9f8ac4;
-                    font-size: 12px;
-                    font-weight: 600;
-                }
-
-                Text {
-                    x: 16px;
-                    y: 30px;
-                    width: parent.width - 32px;
-                    height: 28px;
-                    text: "C++, Rust, DirectX 11, DirectComposition, Slint, FFmpeg";
-                    color: white;
-                    font-size: 15px;
-                    wrap: word-wrap;
-                }
-            }
-
-            Rectangle {
-                x: 24px;
-                y: 290px;
-                width: parent.width - 48px;
-                height: 96px;
-                background: #1a1425;
-                border-radius: 12px;
-                border-width: 1px;
-                border-color: #332547;
-
-                Text {
-                    x: 16px;
-                    y: 10px;
-                    width: parent.width - 32px;
-                    height: 16px;
-                    text: "Special thanks";
-                    color: #9f8ac4;
-                    font-size: 12px;
-                    font-weight: 600;
-                }
-
-                Text {
-                    x: 16px;
-                    y: 30px;
-                    width: parent.width - 32px;
-                    height: 44px;
-                    text: "FFmpeg, D3D11, Slint, and the APIs that made this project possible.";
-                    color: white;
-                    font-size: 15px;
-                    wrap: word-wrap;
-                }
-            }
-
-            Rectangle {
-                x: 24px;
-                y: 398px;
-                width: parent.width - 48px;
-                height: 58px;
-                background: #1a1425;
-                border-radius: 12px;
-                border-width: 1px;
-                border-color: #332547;
-
-                Text {
-                    x: 16px;
-                    y: 10px;
-                    width: parent.width - 32px;
-                    height: 16px;
-                    text: "License";
-                    color: #9f8ac4;
-                    font-size: 12px;
-                    font-weight: 600;
-                }
-
-                Text {
-                    x: 16px;
-                    y: 28px;
-                    width: parent.width - 32px;
-                    height: 18px;
-                    text: "AGPL v3";
-                    color: white;
-                    font-size: 15px;
-                    font-weight: 600;
-                }
-            }
-
-            Text {
-                x: 24px;
-                y: 468px;
-                width: parent.width - 48px;
-                height: 18px;
-                text: "© Shogun65 2026";
-                color: #8a7aa8;
-                font-size: 13px;
-                horizontal-alignment: center;
-            }
-        }
+        close => { root.about_open = false; }
     }
 }

@@ -33,7 +33,6 @@ export component WallpaperCard inherits Rectangle {
         border-radius: 10px;
         clip: true;
 
-        // Show the cached ffmpeg preview when we have one.
         if data.has_thumbnail: Image {
             width: parent.width;
             height: parent.height;
@@ -41,7 +40,6 @@ export component WallpaperCard inherits Rectangle {
             image-fit: cover;
         }
 
-        // If preview generation failed, keep a clean fallback instead of breaking the card.
         if !data.has_thumbnail: Rectangle {
             background: #1b1329;
 
@@ -65,7 +63,6 @@ export component WallpaperCard inherits Rectangle {
             background: #9f3dff;
             border-radius: 12px;
 
-            // Small format pill so the card still tells you what kind of file it points to.
             Text {
                 text: data.format;
                 color: white;
@@ -111,11 +108,7 @@ export component WallpaperCard inherits Rectangle {
         overflow: elide;
     }
 
-    // Let the whole card surface act like one button instead of requiring precise clicks.
-    // Send the wallpaper path only on double click, so single clicks stay harmless.
-    touch-area := TouchArea {
-        double-clicked => {
-            root.wallpaper_card_double_clicked(data.path);
-        }
+    TouchArea {
+        double-clicked => { root.wallpaper_card_double_clicked(data.path); }
     }
 }
