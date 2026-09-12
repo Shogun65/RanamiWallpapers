@@ -111,9 +111,7 @@ pub mod set_wallpaper{
         format!("{hash:016x}")
     }
 
-    pub fn set_static_wallpaper(video_path: PathBuf)-> JoinHandle<()>{
-
-        let handle = thread::spawn(move ||{
+    pub fn set_static_wallpaper(video_path: PathBuf){
 
             if need_genration(&video_path){
                 println!("[INFO] need_genration");
@@ -138,10 +136,6 @@ pub mod set_wallpaper{
             if !set_static_wallpaper_on_desktop(&static_wallpaper_path){
                 println!("Err Cant set the static wallpaper! Check error.txt");
             }
-
-        });
-
-        return handle;
     }
 
     fn need_genration(video_path: &Path) -> bool {
