@@ -32,7 +32,7 @@ void DXVA::ProcessVideoWidthAndHeight(AVCodecContext* CodecContext, UINT DWidth,
 
 	_VideoContext->VideoProcessorSetStreamDestRect(
 		_VideoProcessor.Get(),
-		1,
+		0,
 		TRUE,
 		&dstRECT
 	);
