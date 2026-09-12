@@ -1,0 +1,63 @@
+// Visual tokens for the Ranami GUI. Components import this singleton instead
+// of owning their own slightly different colours and common dimensions.
+export global Theme {
+    // Colours
+    out property <color> page-background: #08070d;
+    out property <color> sidebar-background: #120f1a;
+    out property <color> sidebar-border: #2a2040;
+    out property <color> content-surface: #100d16;
+    out property <color> content-border: #241a36;
+    out property <color> section-surface: #181224;
+    out property <color> section-border: #34254f;
+    out property <color> library-background: #0c0a13;
+    out property <color> library-border: #21192f;
+    out property <color> card-background: #15111d;
+    out property <color> card-border: #312548;
+    out property <color> preview-background: #1b1329;
+    out property <color> dialog-backdrop: #05040ab8;
+    out property <color> dialog-surface: #130f1b;
+    out property <color> dialog-border: #3c2b59;
+    out property <color> dialog-section: #1a1425;
+    out property <color> dialog-section-border: #332547;
+    out property <color> button-background: #261834;
+    out property <color> button-border: #503172;
+    out property <color> button-hover-background: #6030b8;
+    out property <color> button-hover-border: #9f6dff;
+    out property <color> accent: #9f3dff;
+    out property <color> divider: #312648;
+    out property <color> text-primary: white;
+    out property <color> text-secondary: #d2c8e8;
+    out property <color> text-muted: #b4a8cb;
+    out property <color> text-subtle: #998cab;
+    out property <color> text-dim: #7d7296;
+    out property <color> text-accent: #c7b6ff;
+    out property <color> text-label: #9f8ac4;
+    out property <color> text-footer: #8a7aa8;
+
+    // Layout
+    out property <length> sidebar-width: 220px;
+    out property <length> outer-padding: 16px;
+    out property <length> content-padding: 20px;
+    out property <length> dialog-padding: 24px;
+    out property <length> spacing-small: 10px;
+    out property <length> spacing-medium: 16px;
+    out property <length> border-thin: 1px;
+    out property <length> button-height: 42px;
+    out property <length> card-height: 238px;
+    out property <length> thumbnail-height: 132px;
+
+    // Corners and type
+    out property <length> radius-small: 8px;
+    out property <length> radius-medium: 12px;
+    out property <length> radius-large: 14px;
+    out property <length> radius-xl: 16px;
+    out property <length> radius-dialog: 18px;
+    out property <length> font-detail: 11px;
+    out property <length> font-label: 12px;
+    out property <length> font-body: 13px;
+    out property <length> font-dialog-body: 14px;
+    out property <length> font-button: 15px;
+    out property <length> font-card-title: 16px;
+    out property <length> font-heading: 22px;
+    out property <length> font-dialog-title: 28px;
+}

@@ -1,8 +1,9 @@
 import { SidebarButton } from "sidebar-button.slint";
+import { Theme } from "../theme.slint";
 
 export component AboutDialog inherits Rectangle {
     callback close();
-    background: #05040ab8;
+    background: Theme.dialog-backdrop;
 
     TouchArea {
         width: parent.width;
@@ -15,10 +16,10 @@ export component AboutDialog inherits Rectangle {
         height: 500px;
         x: (root.width - self.width) / 2;
         y: (root.height - self.height) / 2;
-        background: #130f1b;
-        border-radius: 18px;
-        border-width: 1px;
-        border-color: #3c2b59;
+        background: Theme.dialog-surface;
+        border-radius: Theme.radius-dialog;
+        border-width: Theme.border-thin;
+        border-color: Theme.dialog-border;
         clip: true;
 
         SidebarButton {
@@ -35,8 +36,8 @@ export component AboutDialog inherits Rectangle {
             width: parent.width - 150px;
             height: 30px;
             text: "Ranami Wallpapers";
-            color: white;
-            font-size: 28px;
+            color: Theme.text-primary;
+            font-size: Theme.font-dialog-title;
             font-weight: 700;
             overflow: elide;
         }
@@ -47,8 +48,8 @@ export component AboutDialog inherits Rectangle {
             width: parent.width - 48px;
             height: 40px;
             text: "Windows live wallpapers with a native rendering core and a simple desktop app experience.";
-            color: #d2c8e8;
-            font-size: 14px;
+            color: Theme.text-secondary;
+            font-size: Theme.font-dialog-body;
             wrap: word-wrap;
         }
 
@@ -57,10 +58,10 @@ export component AboutDialog inherits Rectangle {
             y: 126px;
             width: parent.width - 48px;
             height: 64px;
-            background: #1a1425;
-            border-radius: 12px;
-            border-width: 1px;
-            border-color: #332547;
+            background: Theme.dialog-section;
+            border-radius: Theme.radius-medium;
+            border-width: Theme.border-thin;
+            border-color: Theme.dialog-section-border;
 
             Text {
                 x: 16px;
@@ -68,8 +69,8 @@ export component AboutDialog inherits Rectangle {
                 width: parent.width - 32px;
                 height: 16px;
                 text: "Version";
-                color: #9f8ac4;
-                font-size: 12px;
+                color: Theme.text-label;
+                font-size: Theme.font-label;
                 font-weight: 600;
             }
 
@@ -79,7 +80,7 @@ export component AboutDialog inherits Rectangle {
                 width: parent.width - 32px;
                 height: 20px;
                 text: "v0.3.0-beta";
-                color: white;
+                color: Theme.text-primary;
                 font-size: 18px;
                 font-weight: 600;
             }
@@ -90,10 +91,10 @@ export component AboutDialog inherits Rectangle {
             y: 202px;
             width: parent.width - 48px;
             height: 76px;
-            background: #1a1425;
-            border-radius: 12px;
-            border-width: 1px;
-            border-color: #332547;
+            background: Theme.dialog-section;
+            border-radius: Theme.radius-medium;
+            border-width: Theme.border-thin;
+            border-color: Theme.dialog-section-border;
 
             Text {
                 x: 16px;
@@ -101,8 +102,8 @@ export component AboutDialog inherits Rectangle {
                 width: parent.width - 32px;
                 height: 16px;
                 text: "Built with";
-                color: #9f8ac4;
-                font-size: 12px;
+                color: Theme.text-label;
+                font-size: Theme.font-label;
                 font-weight: 600;
             }
 
@@ -112,7 +113,7 @@ export component AboutDialog inherits Rectangle {
                 width: parent.width - 32px;
                 height: 28px;
                 text: "C++, Rust, DirectX 11, DirectComposition, Slint, FFmpeg";
-                color: white;
+                color: Theme.text-primary;
                 font-size: 15px;
                 wrap: word-wrap;
             }
@@ -123,10 +124,10 @@ export component AboutDialog inherits Rectangle {
             y: 290px;
             width: parent.width - 48px;
             height: 96px;
-            background: #1a1425;
-            border-radius: 12px;
-            border-width: 1px;
-            border-color: #332547;
+            background: Theme.dialog-section;
+            border-radius: Theme.radius-medium;
+            border-width: Theme.border-thin;
+            border-color: Theme.dialog-section-border;
 
             Text {
                 x: 16px;
@@ -134,8 +135,8 @@ export component AboutDialog inherits Rectangle {
                 width: parent.width - 32px;
                 height: 16px;
                 text: "Special thanks";
-                color: #9f8ac4;
-                font-size: 12px;
+                color: Theme.text-label;
+                font-size: Theme.font-label;
                 font-weight: 600;
             }
 
@@ -145,7 +146,7 @@ export component AboutDialog inherits Rectangle {
                 width: parent.width - 32px;
                 height: 44px;
                 text: "FFmpeg, D3D11, Slint, and the APIs that made this project possible.";
-                color: white;
+                color: Theme.text-primary;
                 font-size: 15px;
                 wrap: word-wrap;
             }
@@ -156,10 +157,10 @@ export component AboutDialog inherits Rectangle {
             y: 398px;
             width: parent.width - 48px;
             height: 58px;
-            background: #1a1425;
-            border-radius: 12px;
-            border-width: 1px;
-            border-color: #332547;
+            background: Theme.dialog-section;
+            border-radius: Theme.radius-medium;
+            border-width: Theme.border-thin;
+            border-color: Theme.dialog-section-border;
 
             Text {
                 x: 16px;
@@ -167,8 +168,8 @@ export component AboutDialog inherits Rectangle {
                 width: parent.width - 32px;
                 height: 16px;
                 text: "License";
-                color: #9f8ac4;
-                font-size: 12px;
+                color: Theme.text-label;
+                font-size: Theme.font-label;
                 font-weight: 600;
             }
 
@@ -178,7 +179,7 @@ export component AboutDialog inherits Rectangle {
                 width: parent.width - 32px;
                 height: 18px;
                 text: "AGPL v3";
-                color: white;
+                color: Theme.text-primary;
                 font-size: 15px;
                 font-weight: 600;
             }
@@ -190,8 +191,8 @@ export component AboutDialog inherits Rectangle {
             width: parent.width - 48px;
             height: 18px;
             text: "© Shogun65 2026";
-            color: #8a7aa8;
-            font-size: 13px;
+            color: Theme.text-footer;
+            font-size: Theme.font-body;
             horizontal-alignment: center;
         }
     }

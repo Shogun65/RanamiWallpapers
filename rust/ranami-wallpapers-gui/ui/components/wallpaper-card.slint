@@ -1,3 +1,5 @@
+import { Theme } from "../theme.slint";
+
 export struct WallpaperCardData {
     title: string,
     path: string,
@@ -16,21 +18,21 @@ export component WallpaperCard inherits Rectangle {
     min-width: 220px;
     preferred-width: 240px;
     max-width: 280px;
-    height: 238px;
+    height: Theme.card-height;
 
     clip: true;
-    background: #15111d;
-    border-radius: 14px;
-    border-width: 1px;
-    border-color: #312548;
+    background: Theme.card-background;
+    border-radius: Theme.radius-large;
+    border-width: Theme.border-thin;
+    border-color: Theme.card-border;
 
     Rectangle {
-        x: 10px;
-        y: 10px;
-        width: parent.width - 20px;
-        height: 132px;
-        background: #1b1329;
-        border-radius: 10px;
+        x: Theme.spacing-small;
+        y: Theme.spacing-small;
+        width: parent.width - Theme.spacing-small * 2;
+        height: Theme.thumbnail-height;
+        background: Theme.preview-background;
+        border-radius: Theme.spacing-small;
         clip: true;
 
         if data.has_thumbnail: Image {
@@ -41,32 +43,32 @@ export component WallpaperCard inherits Rectangle {
         }
 
         if !data.has_thumbnail: Rectangle {
-            background: #1b1329;
+            background: Theme.preview-background;
 
             Text {
                 width: parent.width;
                 y: parent.height / 2 - 11px;
                 height: 22px;
                 text: data.is_loading ? "Loading preview..." : "Preview unavailable";
-                color: #c7b6ff;
-                font-size: 13px;
+                color: Theme.text-accent;
+                font-size: Theme.font-body;
                 font-weight: 600;
                 horizontal-alignment: center;
             }
         }
 
         Rectangle {
-            x: 12px;
-            y: 12px;
+            x: Theme.radius-medium;
+            y: Theme.radius-medium;
             width: 72px;
             height: 24px;
-            background: #9f3dff;
-            border-radius: 12px;
+            background: Theme.accent;
+            border-radius: Theme.radius-medium;
 
             Text {
                 text: data.format;
-                color: white;
-                font-size: 11px;
+                color: Theme.text-primary;
+                font-size: Theme.font-detail;
                 font-weight: 600;
                 horizontal-alignment: center;
                 vertical-alignment: center;
@@ -75,36 +77,36 @@ export component WallpaperCard inherits Rectangle {
     }
 
     Text {
-        x: 12px;
+        x: Theme.radius-medium;
         y: 154px;
-        width: parent.width - 24px;
+        width: parent.width - Theme.radius-medium * 2;
         height: 24px;
         text: data.title;
-        color: white;
-        font-size: 16px;
+        color: Theme.text-primary;
+        font-size: Theme.font-card-title;
         font-weight: 600;
         overflow: elide;
     }
 
     Text {
-        x: 12px;
+        x: Theme.radius-medium;
         y: 184px;
-        width: parent.width - 24px;
+        width: parent.width - Theme.radius-medium * 2;
         height: 18px;
         text: data.path;
-        color: #b4a8cb;
-        font-size: 12px;
+        color: Theme.text-muted;
+        font-size: Theme.font-label;
         overflow: elide;
     }
 
     Text {
-        x: 12px;
+        x: Theme.radius-medium;
         y: 208px;
-        width: parent.width - 24px;
+        width: parent.width - Theme.radius-medium * 2;
         height: 14px;
         text: data.details;
-        color: #7d7296;
-        font-size: 11px;
+        color: Theme.text-dim; 
+        font-size: Theme.font-detail;
         overflow: elide;
     }
 

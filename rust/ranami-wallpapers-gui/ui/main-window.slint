@@ -3,6 +3,7 @@ import { AppSidebar } from "components/app-sidebar.slint";
 import { AboutDialog } from "components/about-dialog.slint";
 import { LibraryView } from "views/library-view.slint";
 import { WallpaperCardData } from "components/wallpaper-card.slint";
+import { Theme } from "theme.slint";
 
 // This is deliberately the small composition root for the GUI. Rust continues
 // to compile this file and talks only to the properties and callbacks below.
@@ -15,7 +16,7 @@ export component AppWindow inherits Window {
     icon: @image-url("../../assets/RanamiIcon.ico");
     title: "Ranami Wallpapers";
 
-    background: #08070d;
+    background: Theme.page-background;
 
     callback import_wallpaper();
     callback wallpaper_card_double_clicked(string);
@@ -25,11 +26,11 @@ export component AppWindow inherits Window {
 
     HorizontalBox {
         height: root.height;
-        padding: 16px;
-        spacing: 16px;
+        padding: Theme.outer-padding;
+        spacing: Theme.spacing-medium;
 
         AppSidebar {
-            width: 220px;
+            width: Theme.sidebar-width;
             import_wallpaper => { root.import_wallpaper(); }
             show_about => { root.about_open = true; }
         }

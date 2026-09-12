@@ -1,26 +1,27 @@
 import { VerticalBox, ScrollView } from "std-widgets.slint";
 import { WallpaperCard, WallpaperCardData } from "../components/wallpaper-card.slint";
+import { Theme } from "../theme.slint";
 
 export component LibraryView inherits Rectangle {
     in property <[WallpaperCardData]> wallpapers: [];
     callback wallpaper_card_double_clicked(string);
 
-    background: #100d16;
-    border-radius: 14px;
-    border-width: 1px;
-    border-color: #241a36;
+    background: Theme.content-surface;
+    border-radius: Theme.radius-large;
+    border-width: Theme.border-thin;
+    border-color: Theme.content-border;
     clip: true;
 
     VerticalBox {
-        padding: 20px;
-        spacing: 16px;
+        padding: Theme.content-padding;
+        spacing: Theme.spacing-medium;
 
         Rectangle {
             height: 58px;
-            background: #181224;
-            border-radius: 12px;
-            border-width: 1px;
-            border-color: #34254f;
+            background: Theme.section-surface;
+            border-radius: Theme.radius-medium;
+            border-width: Theme.border-thin;
+            border-color: Theme.section-border;
 
             Text {
                 x: 18px;
@@ -28,18 +29,18 @@ export component LibraryView inherits Rectangle {
                 width: parent.width - 36px;
                 height: 24px;
                 text: "Wallpaper Library";
-                color: white;
-                font-size: 22px;
+                color: Theme.text-primary;
+                font-size: Theme.font-heading;
                 font-weight: 600;
                 overflow: elide;
             }
         }
 
         Rectangle {
-            background: #0c0a13;
-            border-radius: 16px;
-            border-width: 1px;
-            border-color: #21192f;
+            background: Theme.library-background;
+            border-radius: Theme.radius-xl;
+            border-width: Theme.border-thin;
+            border-color: Theme.library-border;
             clip: true;
 
             if root.wallpapers.length == 0: Rectangle {
@@ -51,8 +52,8 @@ export component LibraryView inherits Rectangle {
                     width: parent.width;
                     height: 26px;
                     text: "No wallpapers saved yet";
-                    color: white;
-                    font-size: 22px;
+                    color: Theme.text-primary;
+                    font-size: Theme.font-heading;
                     font-weight: 600;
                     horizontal-alignment: center;
                     vertical-alignment: center;
@@ -64,8 +65,8 @@ export component LibraryView inherits Rectangle {
                     width: parent.width - 100px;
                     height: 36px;
                     text: "Use Import Wallpaper on the left and every saved wallpaper will show up here as a card.";
-                    color: #998cab;
-                    font-size: 13px;
+                    color: Theme.text-subtle;
+                    font-size: Theme.font-body;
                     wrap: word-wrap;
                     horizontal-alignment: center;
                 }
@@ -74,9 +75,9 @@ export component LibraryView inherits Rectangle {
             if root.wallpapers.length > 0: library-scroll := ScrollView {
                 width: 100%;
                 height: 100%;
-                private property <length> grid-gap: 16px;
-                private property <length> grid-padding: 20px;
-                private property <length> card-height: 238px;
+                private property <length> grid-gap: Theme.spacing-medium;
+                private property <length> grid-padding: Theme.content-padding;
+                private property <length> card-height: Theme.card-height;
                 private property <int> column-count:
                     self.visible-width > 1420px ? 5 :
                     self.visible-width > 1160px ? 4 :

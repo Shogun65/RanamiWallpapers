@@ -1,19 +1,21 @@
+import { Theme } from "../theme.slint";
+
 export component SidebarButton inherits Rectangle {
     // Reusable sidebar button so every menu item keeps the same size and hover behavior.
-    height: 42px;
-    background: #261834;
-    border-radius: 8px;
-    border-width: 1px;
-    border-color: #503172;
+    height: Theme.button-height;
+    background: Theme.button-background;
+    border-radius: Theme.radius-small;
+    border-width: Theme.border-thin;
+    border-color: Theme.button-border;
 
     in property <string> title;
     callback clicked();
 
     Text {
-        x: 10px;
+        x: Theme.spacing-small;
         text: title;
-        color: white;
-        font-size: 15px;
+        color: Theme.text-primary;
+        font-size: Theme.font-button;
         vertical-alignment: center;
     }
 
@@ -24,8 +26,8 @@ export component SidebarButton inherits Rectangle {
     // Hover feedback helps placeholder buttons still feel interactive and consistent.
     states [
         hover when ta.has-hover: {
-            background: #6030b8;
-            border-color: #9f6dff;
+            background: Theme.button-hover-background;
+            border-color: Theme.button-hover-border;
         }
     ]
 }

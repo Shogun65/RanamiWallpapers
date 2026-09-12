@@ -249,12 +249,16 @@ fn wallpaper_details(path: &str) -> String {
     let resolution = wallpaper_resolution(path);
     let file_size = wallpaper_file_size(path);
 
-    match (resolution, file_size) {
+    let res_and_size = match (resolution, file_size) {
         (Some(resolution), Some(file_size)) => format!("{resolution} | {file_size}"),
         (Some(resolution), None) => resolution,
         (None, Some(file_size)) => file_size,
         (None, None) => "Saved live wallpaper".to_string(),
-    }
+    };
+
+    println!("[INFO] wallpaper_details: {}", res_and_size);
+
+    return res_and_size;
 }
 
 fn wallpaper_resolution(path: &str) -> Option<String> {

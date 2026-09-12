@@ -10,7 +10,6 @@ pub mod set_wallpaper{
 	};
 	use std::os::windows::process::CommandExt;
 	use std::ffi::OsStr;
-    use std::thread::{self, JoinHandle};
     use windows::Win32::UI::WindowsAndMessaging::{
         SystemParametersInfoW,
         SPI_SETDESKWALLPAPER,
