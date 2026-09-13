@@ -39,16 +39,23 @@ export component SidebarNavItem inherits Rectangle {
         clicked => { root.clicked(); }
     }
 
+    // states [
+    //     test when ta.has-hover: {
+    //         background: #ff0000;
+    //         border-color: #ffffff;
+    //     }
+    // ]
+
     // State styling is resolved by Slint automatically: active wins for the
     // selected page, while the other rows react only when the pointer is over them.
     states [
-        selected when root.active: {
-            background: Theme.sidebar-nav-active;
-            border-color: Theme.sidebar-nav-active-border;
-        }
-        hover when ta.has-hover && !root.active: {
-            background: Theme.button-background;
-            border-color: Theme.button-hover-border;
-        }
+       selected when root.active: {
+           background: Theme.sidebar-nav-active;
+           border-color: Theme.sidebar-nav-active-border;
+       }
+       hover when ta.has-hover && !root.active: {
+           background: Theme.button-background;
+           border-color: Theme.button-hover-border;
+       }
     ]
 }

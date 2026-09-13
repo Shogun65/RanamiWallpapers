@@ -39,28 +39,29 @@ export component AppSidebar inherits Rectangle {
     }
 
     Text {
-        x: 52px;
-        y: 17px;
-        text: "Ranami";
-        color: Theme.text-primary;
-        font-size: Theme.font-sidebar-title;
-        font-weight: 700;
+       x: 52px;
+       y: 17px;
+       text: "Ranami";
+       color: Theme.text-primary;
+       font-size: Theme.font-sidebar-title;
+       font-weight: 700;
     }
 
-    Text {
-        x: 53px;
-        y: 36px;
-        text: "WALLPAPERS";
-        color: Theme.text-label;
-        font-size: Theme.font-detail;
-        font-weight: 600;
+   Text {
+       x: 53px;
+       y: 36px;
+       text: "WALLPAPERS";
+       color: Theme.text-label;
+       font-size: Theme.font-detail;
+       font-weight: 600;
     }
 
-    SidebarButton {
+    SidebarNavItem {
         x: Theme.sidebar-content-inset;
-        y: 70px;
+        y: 78px;
         width: parent.width - 2 * Theme.sidebar-content-inset;
-        title: "＋  Import Wallpaper";
+        title: "Import Wallpaper";
+        icon: @image-url("../../../assets/sidebar-icons/import-v1.png");
         // This reaches the Rust import callback through AppWindow unchanged.
         clicked => { root.import_wallpaper(); }
     }

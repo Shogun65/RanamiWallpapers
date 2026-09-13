@@ -9,6 +9,9 @@ export component SidebarButton inherits Rectangle {
     border-color: Theme.button-border;
 
     in property <string> title;
+    // Some sidebar actions, such as Import, intentionally stay visually quiet
+    // and can opt out of the standard hover treatment.
+    in property <bool> hover-enabled: true;
     callback clicked();
 
     Text {
@@ -25,8 +28,8 @@ export component SidebarButton inherits Rectangle {
 
     // Hover feedback helps placeholder buttons still feel interactive and consistent.
     states [
-        hover when ta.has-hover: {
-            background: Theme.button-hover-background;
+        hover when ta.has-hover && root.hover-enabled: {
+            background: Theme.button-background;
             border-color: Theme.button-hover-border;
         }
     ]
