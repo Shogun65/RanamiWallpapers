@@ -1,5 +1,5 @@
-import { VerticalBox } from "std-widgets.slint";
 import { SidebarButton } from "sidebar-button.slint";
+import { SidebarNavItem } from "sidebar-nav-item.slint";
 import { Theme } from "../theme.slint";
 
 export component AppSidebar inherits Rectangle {
@@ -12,24 +12,126 @@ export component AppSidebar inherits Rectangle {
     callback import_wallpaper();
     callback show_about();
 
-    VerticalBox {
-        padding: Theme.spacing-small;
-        spacing: Theme.spacing-small;
+    clip: true;
 
-        SidebarButton {
-            title: "➕ Import Wallpaper";
-            clicked => { root.import_wallpaper(); }
+    // The artwork remains decorative; the dark overlay keeps all navigation
+    // text legible at every window height.
+    Image {
+        width: parent.width;
+        height: parent.height;
+        source: @image-url("../../../assets/sidebar_image_v1.png");
+        image-fit: cover;
+    }
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: Theme.sidebar-artwork-overlay;
+    }
+
+    Image {
+        x: Theme.sidebar-content-inset;
+        y: 18px;
+        width: 30px;
+        height: 30px;
+        source: @image-url("../../../assets/RanamiIcon.ico");
+        image-fit: contain;
+    }
+
+    Text {
+        x: 52px;
+        y: 17px;
+        text: "Ranami";
+        color: Theme.text-primary;
+        font-size: Theme.font-sidebar-title;
+        font-weight: 700;
+    }
+
+    Text {
+        x: 53px;
+        y: 36px;
+        text: "WALLPAPERS";
+        color: Theme.text-label;
+        font-size: Theme.font-detail;
+        font-weight: 600;
+    }
+
+    SidebarButton {
+        x: Theme.sidebar-content-inset;
+        y: 70px;
+        width: parent.width - 2 * Theme.sidebar-content-inset;
+        title: "＋  Import Wallpaper";
+        // This reaches the Rust import callback through AppWindow unchanged.
+        clicked => { root.import_wallpaper(); }
+    }
+
+    Text {
+        x: Theme.sidebar-content-inset;
+        y: 138px;
+        text: "LIBRARY";
+        color: Theme.text-label;
+        font-size: Theme.font-detail;
+        font-weight: 600;
+    }
+
+    SidebarNavItem {
+        x: Theme.sidebar-content-inset;
+        y: 158px;
+        width: parent.width - 2 * Theme.sidebar-content-inset;
+        icon: @image-url("../../../assets/sidebar-icons/wallpaper-library-v1.png");
+        title: "Wallpaper Library";
+        // The library is the only implemented navigation view at present.
+        active: true;
+    }
+
+    SidebarNavItem {
+        x: Theme.sidebar-content-inset;
+        y: 220px;
+        width: parent.width - 2 * Theme.sidebar-content-inset;
+        icon: @image-url("../../../assets/sidebar-icons/settings-v1.png");
+        title: "Settings";
+        // Kept as a visual placeholder until the Settings view exists.
+    }
+
+    SidebarNavItem {
+        x: Theme.sidebar-content-inset;
+        y: 282px;
+        width: parent.width - 2 * Theme.sidebar-content-inset;
+        icon: @image-url("../../../assets/sidebar-icons/about-v1.png");
+        title: "About";
+        // This opens the existing AboutDialog in main-window.slint.
+        clicked => { root.show_about(); }
+    }
+
+    Rectangle {
+        x: Theme.sidebar-content-inset;
+        // Anchor this panel to the bottom so it stays in place on resize.
+        y: parent.height - 132px;
+        width: parent.width - 2 * Theme.sidebar-content-inset;
+        height: 108px;
+        background: Theme.sidebar-quote-background;
+        border-radius: Theme.radius-medium;
+        border-width: Theme.border-thin;
+        border-color: Theme.sidebar-nav-border;
+
+        Text {
+            x: Theme.spacing-small;
+            y: Theme.spacing-small;
+            width: parent.width - 2 * Theme.spacing-small;
+            text: "\"A better desktop,\na calmer you.\"";
+            color: Theme.text-accent;
+            font-size: Theme.font-body;
+            wrap: word-wrap;
         }
 
-        Rectangle {
-            height: Theme.border-thin;
-            border-radius: Theme.radius-small;
-            background: Theme.divider;
-        }
-
-        SidebarButton {
-            title: "❕ About";
-            clicked => { root.show_about(); }
+        Text {
+            x: Theme.spacing-small;
+            y: 80px;
+            width: parent.width - 2 * Theme.spacing-small;
+            text: "— Ranami";
+            color: Theme.text-footer;
+            font-size: Theme.font-label;
+            horizontal-alignment: right;
         }
     }
 }

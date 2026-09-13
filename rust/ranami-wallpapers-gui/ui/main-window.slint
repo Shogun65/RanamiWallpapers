@@ -10,8 +10,12 @@ import { Theme } from "theme.slint";
 export { WallpaperCardData } from "components/wallpaper-card.slint";
 
 export component AppWindow inherits Window {
-    width: 1250px;
-    height: 700px;
+    preferred-width: 1250px;
+    preferred-height: 700px;
+    // Keep enough room for the sidebar and a usable wallpaper grid, while
+    // leaving the native Windows resize and maximize controls available.
+    min-width: 820px;
+    min-height: 540px;
 
     icon: @image-url("../../assets/RanamiIcon.ico");
     title: "Ranami Wallpapers";
@@ -24,6 +28,8 @@ export component AppWindow inherits Window {
     in-out property <[WallpaperCardData]> wallpapers: [];
     in-out property <bool> about_open: false;
 
+    // The two primary areas share the available window width. LibraryView takes
+    // the remaining space after the fixed-width sidebar.
     HorizontalBox {
         height: root.height;
         padding: Theme.outer-padding;
@@ -43,6 +49,8 @@ export component AppWindow inherits Window {
         }
     }
 
+    // The dialog is only instantiated while its state property is true.
+    // The close callback changes that property back to false.
     if root.about_open: AboutDialog {
         x: 0px;
         y: 0px;

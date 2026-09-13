@@ -1,0 +1,54 @@
+import { Theme } from "../theme.slint";
+
+// A navigation row used by the sidebar. The active state is visual for now;
+// individual pages can be wired up when those views are ready.
+export component SidebarNavItem inherits Rectangle {
+    in property <image> icon;
+    in property <string> title;
+    in property <bool> active: false;
+    callback clicked();
+
+    height: 52px;
+    background: Theme.sidebar-nav-background;
+    border-radius: Theme.radius-medium;
+    border-width: Theme.border-thin;
+    border-color: Theme.sidebar-nav-border;
+
+    Image {
+        x: 14px;
+        y: 14px;
+        width: 24px;
+        height: 24px;
+        source: root.icon;
+        image-fit: contain;
+    }
+
+    Text {
+        x: 50px;
+        width: parent.width - 64px;
+        height: parent.height;
+        text: root.title;
+        color: Theme.text-primary;
+        font-size: Theme.font-button;
+        font-weight: 600;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+
+    ta := TouchArea {
+        clicked => { root.clicked(); }
+    }
+
+    // State styling is resolved by Slint automatically: active wins for the
+    // selected page, while the other rows react only when the pointer is over them.
+    states [
+        selected when root.active: {
+            background: Theme.sidebar-nav-active;
+            border-color: Theme.sidebar-nav-active-border;
+        }
+        hover when ta.has-hover && !root.active: {
+            background: Theme.button-background;
+            border-color: Theme.button-hover-border;
+        }
+    ]
+}

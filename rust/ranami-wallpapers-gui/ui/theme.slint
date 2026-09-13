@@ -1,10 +1,18 @@
 // Visual tokens for the Ranami GUI. Components import this singleton instead
 // of owning their own slightly different colours and common dimensions.
+// Shared visual values for every Slint component. Keeping them here lets a
+// palette or spacing adjustment update the whole UI consistently.
 export global Theme {
     // Colours
     out property <color> page-background: #08070d;
     out property <color> sidebar-background: #120f1a;
     out property <color> sidebar-border: #2a2040;
+    out property <color> sidebar-artwork-overlay: #07060bb8;
+    out property <color> sidebar-nav-background: #110d1bbd;
+    out property <color> sidebar-nav-border: #382653;
+    out property <color> sidebar-nav-active: #5420a8d9;
+    out property <color> sidebar-nav-active-border: #a65dff;
+    out property <color> sidebar-quote-background: #0e0a16c9;
     out property <color> content-surface: #100d16;
     out property <color> content-border: #241a36;
     out property <color> section-surface: #181224;
@@ -36,6 +44,7 @@ export global Theme {
 
     // Layout
     out property <length> sidebar-width: 220px;
+    out property <length> sidebar-content-inset: 14px;
     out property <length> outer-padding: 16px;
     out property <length> content-padding: 20px;
     out property <length> dialog-padding: 24px;
@@ -57,6 +66,7 @@ export global Theme {
     out property <length> font-body: 13px;
     out property <length> font-dialog-body: 14px;
     out property <length> font-button: 15px;
+    out property <length> font-sidebar-title: 16px;
     out property <length> font-card-title: 16px;
     out property <length> font-heading: 22px;
     out property <length> font-dialog-title: 28px;
