@@ -4,7 +4,7 @@
 
 Ranami Wallpapers lets you use video files as animated desktop wallpapers while keeping the playback engine focused on efficient GPU-based video decoding and rendering.
 
-> **Status:** Beta — v0.3.0
+> **Status:** Beta — v0.3.1
 
 ---
 
